@@ -233,7 +233,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		}
 		*/
 
-		// Let's Entity from the current action.
+		// The current action defines the Entity and ID source.
 		switch ( current_action() ) {
 
 			case 'cwps/acf/activity/acf_fields_saved':
