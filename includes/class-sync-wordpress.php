@@ -127,7 +127,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 		add_action( 'created_term', [ $this, 'term_created' ], 20, 3 );
 		add_action( 'edit_terms', [ $this, 'term_edited_pre' ], 20, 2 );
 		add_action( 'edited_term', [ $this, 'term_edited' ], 20, 3 );
-		add_action( 'delete_term', [ $this, 'term_deleted' ], 20, 4 );
+		add_action( 'pre_delete_term', [ $this, 'term_deleted_pre' ], 20, 2 );
 
 	}
 
@@ -143,7 +143,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 		remove_action( 'created_term', [ $this, 'term_created' ], 20 );
 		remove_action( 'edit_terms', [ $this, 'term_edited_pre' ], 20 );
 		remove_action( 'edited_term', [ $this, 'term_edited' ], 20 );
-		remove_action( 'delete_term', [ $this, 'term_deleted' ], 20 );
+		remove_action( 'pre_delete_term', [ $this, 'term_deleted_pre' ], 20 );
 
 	}
 
@@ -255,24 +255,33 @@ class WPCV_Tax_Field_Sync_WordPress {
 	}
 
 	/**
-	 * Hook into deletion of a synced Taxonomy Term.
+	 * Acts just before the deletion of a synced Taxonomy Term.
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $term_id The numeric ID of the deleted Term.
-	 * @param array $tt_id The numeric ID of the deleted Term Taxonomy.
+	 * @param int $deleted_term_id The numeric ID of the Term about to be deleted.
 	 * @param string $taxonomy The name of the Taxonomy.
-	 * @param object $deleted_term The deleted Term object.
 	 */
-	public function term_deleted( $term_id, $tt_id, $taxonomy, $deleted_term ) {
+	public function term_deleted_pre( $deleted_term_id, $taxonomy ) {
+
+		/*
+		$e = new \Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'deleted_term_id' => $deleted_term_id,
+			'taxonomy' => $taxonomy,
+			//'backtrace' => $trace,
+		], true ) );
+		*/
 
 		// Only act on Terms in the synced Taxonomy.
 		if ( $taxonomy !== $this->taxonomy ) {
 			return;
 		}
 
-		// Delete the CiviCRM Option Value if it exists.
-		$option_value_id = $this->civicrm->option_value_delete( $deleted_term );
+		// Disable the CiviCRM Option Value if it exists.
+		$option_value_id = $this->civicrm->option_value_disable( $deleted_term_id );
 
 	}
 
@@ -290,6 +299,11 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Sanity check.
 		if ( ! is_array( $option_value ) ) {
+			return false;
+		}
+
+		// Don't create if disabled.
+		if ( false === $option_value['is_active'] ) {
 			return false;
 		}
 
@@ -395,6 +409,17 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 			// --<
 			return $result['term_id'];
+
+		}
+
+		// Delete the Term if the Option Value is disabled.
+		if ( false === $new_option_value['is_active'] ) {
+
+			// Delete the Term.
+			$result = $this->term_delete( $term_id );
+
+			// Always return false.
+			return false;
 
 		}
 

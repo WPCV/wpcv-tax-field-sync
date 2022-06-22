@@ -724,12 +724,19 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			$description = $option_value_full['description'];
 		}
 
+		// Add Enabled if present.
+		$is_active = false;
+		if ( ! empty( $option_value_full['is_active'] ) ) {
+			$is_active = true;
+		}
+
 		// Construct Term data.
 		$term_data = [
 			'id' => $option_value->id,
 			'label' => $option_value_full['label'],
 			'name' => $option_value_full['label'],
 			'description' => $description,
+			'is_active' => $is_active,
 		];
 
 		/*
@@ -861,12 +868,19 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			$description = $option_value_full['description'];
 		}
 
+		// Add Enabled if present.
+		$is_active = false;
+		if ( ! empty( $option_value_full['is_active'] ) ) {
+			$is_active = true;
+		}
+
 		// Construct Term data.
 		$term_data = [
 			'id' => $option_value->id,
 			'label' => $option_value_full['label'],
 			'name' => $option_value_full['label'],
 			'description' => $description,
+			'is_active' => $is_active,
 		];
 
 		/*
@@ -1029,6 +1043,77 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// --<
 		return $option_value_id;
+
+	}
+
+	/**
+	 * Disables a synced Custom Field's Option Value.
+	 *
+	 * @since 1.0
+	 *
+	 * @param int $term_id The numeric ID of the Term.
+	 * @return array|bool CiviCRM API data array on success, false on failure.
+	 */
+	public function option_value_disable( $term_id ) {
+
+		// Sanity check.
+		if ( ! is_numeric( $term_id ) ) {
+			return false;
+		}
+
+		// Try and init CiviCRM.
+		if ( ! $this->is_initialised() ) {
+			return false;
+		}
+
+		// Get ID of Option Value to disable.
+		$option_value_id = $this->option_value_id_get_by_term_id( $term_id );
+		if ( $option_value_id === false ) {
+			return false;
+		}
+
+		// Define params for update.
+		$params = [
+			'version' => 3,
+			'id' => $option_value_id,
+			'is_active' => 0,
+		];
+
+		// Unhook CiviCRM.
+		$this->hooks_civicrm_remove();
+
+		// Call the CiviCRM API.
+		$result = civicrm_api( 'OptionValue', 'create', $params );
+
+		/*
+		$e = new \Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'params' => $params,
+			'result' => $result,
+			//'backtrace' => $trace,
+		], true ) );
+		*/
+
+		// Rehook CiviCRM.
+		$this->hooks_civicrm_add();
+
+		// Log and bail if there's an error.
+		if ( ! empty( $result['is_error'] ) ) {
+			$e = new Exception();
+			$trace = $e->getTraceAsString();
+			$this->sync->log_error( [
+				'method' => __METHOD__,
+				'message' => $result['error_message'],
+				'params' => $params,
+				'backtrace' => $trace,
+			] );
+			return false;
+		}
+
+		// --<
+		return $result;
 
 	}
 
