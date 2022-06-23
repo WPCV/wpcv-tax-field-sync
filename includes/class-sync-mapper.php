@@ -98,7 +98,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 		$this->hooks_civicrm_add();
 		$this->hooks_wordpress_add();
 		$this->hooks_civicrm_wordpress_add();
-		$this->hooks_wordpress_civicrm_add();
 
 	}
 
@@ -118,6 +117,21 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 	/**
 	 * Register CiviCRM hooks.
+	 *
+	 * These hooks are called when Post ACF Fields are saved. They are also called
+	 * when Manual Sync runs in CiviCRM Profile Sync and CiviCRM Event Organiser.
+	 *
+	 * We use these hooks because the sync relationship relies on CiviCRM Profile
+	 * Sync and CiviCRM Event Organiser for the mapping between WordPress Post
+	 * Types and CiviCRM Entity Types.
+	 *
+	 * Note: this plugin could actually be configured for CiviCRM Event Organiser
+	 * to work without the need for CiviCRM Profile Sync and ACF, but this hasn't
+	 * been done yet.
+	 *
+	 * Note: this plugin cannot be used for WordPress Users because they do not
+	 * have Taxonomies. A plugin might enable this, but it's not available through
+	 * vanilla WordPress.
 	 *
 	 * @since 1.0
 	 */
@@ -184,21 +198,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 		add_action( 'cwps/acf/post/contact/sync', [ $this, 'entity_sync_to_post' ], 10 );
 		add_action( 'cwps/acf/post/participant/sync', [ $this, 'entity_sync_to_post' ], 10 );
 		add_action( 'civicrm_event_organiser_admin_civi_to_eo_sync', [ $this, 'entity_sync_to_post' ], 10 );
-
-	}
-
-	/**
-	 * Register WordPress-to-CiviCRM sync hooks.
-	 *
-	 * @since 1.0
-	 */
-	public function hooks_wordpress_civicrm_add() {
-
-		/*
-		// Listen for an Event Organiser Event being synced to a CiviCRM Event.
-		add_action( 'civicrm_event_organiser_admin_eo_to_civi_sync_pre', [ $this, 'event_sync_to_civi_pre' ], 10 );
-		add_action( 'civicrm_event_organiser_admin_eo_to_civi_sync', [ $this, 'event_sync_to_civi' ], 10 );
-		*/
 
 	}
 
@@ -285,7 +284,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 			case 'ceo/acf/event/acf_fields_saved':
 				$entity_name = 'Event';
-				$entity_id = $args['event_id'];
+				$entity_id = $args['civi_event_id'];
 				break;
 
 		}
