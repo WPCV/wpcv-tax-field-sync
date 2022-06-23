@@ -153,7 +153,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public function hooks_civicrm_add() {
 
 		// Hook into Profile Sync after Custom Fields have been edited.
-		add_action( 'cwps/acf/mapper/civicrm/custom/edit/pre', [ $this, 'custom_pre_edit' ], 10 );
 		add_action( 'cwps/acf/civicrm/custom_field/custom_edited', [ $this, 'custom_edited' ], 10, 2 );
 
 	}
@@ -166,7 +165,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public function hooks_civicrm_remove() {
 
 		// Remove CiviCRM callbacks.
-		remove_action( 'cwps/acf/mapper/civicrm/custom/edit/pre', [ $this, 'custom_pre_edit' ], 10 );
 		remove_action( 'cwps/acf/civicrm/custom_field/custom_edited', [ $this, 'custom_edited' ], 10 );
 
 	}
@@ -335,109 +333,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Acts when a set of CiviCRM Custom Fields is about to be updated.
-	 *
-	 * We need to retrieve the Custom Field values for any synced Fields before
-	 * they are updated so that we can remove any corresponding Terms.
-	 *
-	 * @since 1.0
-	 *
-	 * @param array $args The array of CiviCRM params.
-	 */
-	public function custom_pre_edit( $args ) {
-
-		// Filter the edited Custom Fields to leave just those which are synced.
-		$synced_custom_fields = $this->civicrm->custom_fields_filter( $args['custom_fields'] );
-		if ( empty( $synced_custom_fields ) ) {
-			return;
-		}
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'synced_custom_fields' => $synced_custom_fields,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
-		// The CiviCRM Entity can be deduced from the "entity_table" entry.
-		$entity = '';
-		foreach( $synced_custom_fields as $synced_custom_field ) {
-			if ( ! empty( $synced_custom_field['entity_table'] ) ) {
-				$entity_table = $synced_custom_field['entity_table'];
-				$entity = str_replace( 'civicrm_', '', $entity_table );
-				break;
-			}
-		}
-
-		// Sanity check.
-		if ( empty( $entity ) ) {
-			return;
-		}
-
-		// Grab the IDs of the Custom Fields.
-		$custom_field_ids = wp_list_pluck( $synced_custom_fields, 'custom_field_id' );
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'entity' => $entity,
-			'entity_id' => $args['entity_id'],
-			'custom_field_ids' => $custom_field_ids,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
-		// Get the current value of the Custom Field.
-		$custom_values = $this->civicrm->custom_field_values_get_for_entity( $entity, $args['entity_id'], $custom_field_ids );
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'custom_values' => $custom_values,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
-		// Sanity check.
-		if ( empty( $custom_values ) ) {
-			$custom_values = [];
-		}
-
-		// Sanity check values.
-		array_walk( $custom_values, function( &$item ) {
-			if ( empty( $item ) ) {
-				$item = [];
-			}
-		} );
-
-		// Store values before they are edited.
-		$this->custom_pre_edit = [
-			//'args' => $args,
-			'entity' => $entity,
-			'entity_id' => $args['entity_id'],
-			'values' => $custom_values,
-		];
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'custom_pre_edit' => $this->custom_pre_edit,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
-	}
-
-	/**
 	 * Acts when a set of CiviCRM Custom Fields has been updated.
 	 *
 	 * @since 1.0
@@ -454,15 +349,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 			'method' => __METHOD__,
 			'post_ids' => $post_ids,
 			'args' => $args,
-			'custom_pre_edit' => empty( $this->custom_pre_edit['values'] ) ? 'nope' : $this->custom_pre_edit['values'],
 			//'backtrace' => $trace,
 		], true ) );
 		*/
-
-		// Bail if there are no previous Custom Field values.
-		if ( empty( $this->custom_pre_edit['values'] ) ) {
-			return;
-		}
 
 		// Bail if there are no Post IDs.
 		if ( empty( $post_ids ) ) {
@@ -486,7 +375,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		*/
 
 		// Build array of new values.
-		$new = [];
+		$new_values = [];
 		foreach( $synced_custom_fields as $field ) {
 
 			// Convert if the value has the special CiviCRM array-like format.
@@ -498,7 +387,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 			}
 
 			// Assign the value after the edit.
-			$new[ (int) $field['custom_field_id'] ] = $values;
+			$new_values[ (int) $field['custom_field_id'] ] = $values;
 
 		}
 
@@ -507,17 +396,14 @@ class WPCV_Tax_Field_Sync_Mapper {
 		$trace = $e->getTraceAsString();
 		error_log( print_r( [
 			'method' => __METHOD__,
-			'old' => $this->custom_pre_edit['values'],
-			'new' => $new,
+			'new_values' => $new_values,
 			//'backtrace' => $trace,
 		], true ) );
 		*/
 
-		// Init mappings array.
-		$mappings = [];
-
 		// Build mappings array.
-		foreach ( $this->custom_pre_edit['values'] as $custom_field_id => $item_old ) {
+		$mappings = [];
+		foreach ( $new_values as $custom_field_id => $values ) {
 
 			// Get the Option Values for the synced Custom Field ID.
 			$option_values = $this->civicrm->option_values_get_by_field_id( $custom_field_id );
@@ -533,20 +419,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 			*/
 
 			if ( empty( $option_values ) ) {
-				continue;
-			}
-
-			// Get the matching item.
-			$item_new = $new[ $custom_field_id ];
-
-			/*
-			 * Keey those that appear in both arrays and add those which are new.
-			 * We can ignore those to remove because the Terms are overwritten.
-			 */
-			$keep = array_intersect( $item_old, $item_new );
-			$add =  array_diff( $item_new, $item_old );
-			$values = array_merge( $keep, $add );
-			if ( empty( $values ) ) {
 				continue;
 			}
 
