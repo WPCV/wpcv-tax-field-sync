@@ -97,6 +97,8 @@ class WPCV_Tax_Field_Sync_Mapper {
 		// Add all hooks.
 		$this->hooks_civicrm_add();
 		$this->hooks_wordpress_add();
+		$this->hooks_civicrm_wordpress_add();
+		$this->hooks_wordpress_civicrm_add();
 
 	}
 
@@ -110,6 +112,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		// Remove all hooks.
 		$this->hooks_civicrm_remove();
 		$this->hooks_wordpress_remove();
+		// No need to remove sync hooks.
 
 	}
 
@@ -169,6 +172,36 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 	}
 
+	/**
+	 * Register CiviCRM-to-WordPress sync hooks.
+	 *
+	 * @since 1.0
+	 */
+	public function hooks_civicrm_wordpress_add() {
+
+		// Listen for CiviCRM Entities being synced to WordPress Posts.
+		add_action( 'cwps/acf/post/activity/sync', [ $this, 'entity_sync_to_post' ], 10 );
+		add_action( 'cwps/acf/post/contact/sync', [ $this, 'entity_sync_to_post' ], 10 );
+		add_action( 'cwps/acf/post/participant/sync', [ $this, 'entity_sync_to_post' ], 10 );
+		add_action( 'civicrm_event_organiser_admin_civi_to_eo_sync', [ $this, 'entity_sync_to_post' ], 10 );
+
+	}
+
+	/**
+	 * Register WordPress-to-CiviCRM sync hooks.
+	 *
+	 * @since 1.0
+	 */
+	public function hooks_wordpress_civicrm_add() {
+
+		/*
+		// Listen for an Event Organiser Event being synced to a CiviCRM Event.
+		add_action( 'civicrm_event_organiser_admin_eo_to_civi_sync_pre', [ $this, 'event_sync_to_civi_pre' ], 10 );
+		add_action( 'civicrm_event_organiser_admin_eo_to_civi_sync', [ $this, 'event_sync_to_civi' ], 10 );
+		*/
+
+	}
+
 	// -------------------------------------------------------------------------
 
 	/**
@@ -181,7 +214,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public function post_saved( $args ) {
 
 		// Bail early if this is not a Post, e.g. User "user_N".
-		if ( ! is_numeric( $args['post_id'] ) ) {
+		if ( empty( $args['post_id'] ) || ! is_numeric( $args['post_id'] ) ) {
 			return;
 		}
 
@@ -490,6 +523,161 @@ class WPCV_Tax_Field_Sync_Mapper {
 			}
 
 		}
+
+		// Add WordPress hooks.
+		$this->hooks_wordpress_add();
+
+	}
+
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Intercept when a CiviCRM Entity is synced to a WordPress Post.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array $args The array of data.
+	 */
+	public function entity_sync_to_post( $args ) {
+
+		// Bail early if this is not a Post, e.g. User "user_N".
+		if ( empty( $args['post_id'] ) || ! is_numeric( $args['post_id'] ) ) {
+			return;
+		}
+
+		// Bail if the edited Post does not have the synced Taxonomy.
+		$taxonomies = get_post_taxonomies( $args['post_id'] );
+		if ( ! in_array( $this->wordpress->taxonomy, $taxonomies ) ) {
+			return;
+		}
+
+		/*
+		$e = new Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'args' => $args,
+			'current_action' => current_action(),
+			//'backtrace' => $trace,
+		], true ) );
+		*/
+
+		// The current action defines the Entity and ID.
+		switch ( current_action() ) {
+
+			// Handle Profile Sync actions.
+			case 'cwps/acf/post/activity/sync':
+				$entity_name = 'Activity';
+				$entity_id = $args['objectId'];
+				$entity = $args['objectRef'];
+				break;
+
+			case 'cwps/acf/post/contact/sync':
+				$entity_name = 'Contact';
+				$entity_id = $args['objectId'];
+				$entity = $args['objectRef'];
+				break;
+
+			case 'cwps/acf/post/participant/sync':
+				$entity_name = 'Participant';
+				$entity_id = $args['objectId'];
+				$entity = $args['objectRef'];
+				break;
+
+			// Handle CEO action.
+			case 'civicrm_event_organiser_admin_civi_to_eo_sync':
+				$entity_name = 'Event';
+				$entity_id = $args['civi_event_id'];
+				$entity = (object) $args['civi_event'];
+				break;
+
+		}
+
+		/*
+		$e = new Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'entity_name' => $entity_name,
+			'entity_id' => $entity_id,
+			'entity' => $entity,
+			//'backtrace' => $trace,
+		], true ) );
+		*/
+
+		// Get the Custom Field if it's not in the data.
+		$code = 'custom_' . $this->civicrm->custom_field_id;
+		if ( ! isset( $entity->$code ) ) {
+			$custom_field_ids = [ $this->civicrm->custom_field_id ];
+			$result = $this->civicrm->custom_field_values_get_for_entity( $entity_name, $entity_id, $custom_field_ids );
+			$values = [];
+			if ( isset( $result[ $this->civicrm->custom_field_id ] ) ) {
+				$values = $result[ $this->civicrm->custom_field_id ];
+			}
+		} else {
+			$values = $entity->$code;
+		}
+
+		/*
+		$e = new Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'values' => $values,
+			//'backtrace' => $trace,
+		], true ) );
+		*/
+
+		// Get the Option Values for the synced Custom Field ID.
+		$option_values = $this->civicrm->option_values_get_by_field_id( $this->civicrm->custom_field_id );
+		if ( empty( $option_values ) ) {
+			return;
+		}
+
+		// Build mapping between the Option Value ID and the value.
+		$mapping = [];
+		foreach ( $values as $key => $value ) {
+			foreach ( $option_values as $option_value ) {
+				if ( $option_value['value'] === $value ) {
+					$mapping[ $option_value['id'] ] = $value;
+				}
+			}
+		}
+
+		/*
+		$e = new Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'mapping' => $mapping,
+			//'backtrace' => $trace,
+		], true ) );
+		*/
+
+		// Construct array of Term IDs to apply to Post.
+		$term_ids = [];
+		foreach ( $mapping as $option_value_id => $value ) {
+			$term = $this->wordpress->term_get_by_option_value_id( $option_value_id );
+			if ( ! empty( $term ) ) {
+				$term_ids[] = $term->term_id;
+			}
+		}
+
+		/*
+		$e = new \Exception();
+		$trace = $e->getTraceAsString();
+		error_log( print_r( [
+			'method' => __METHOD__,
+			'term_ids' => $term_ids,
+			//'backtrace' => $trace,
+		], true ) );
+		*/
+
+		// Remove WordPress hooks.
+		$this->hooks_wordpress_remove();
+
+		// Apply Terms to Post.
+		$this->wordpress->terms_update_for_post( $args['post_id'], $term_ids );
 
 		// Add WordPress hooks.
 		$this->hooks_wordpress_add();
