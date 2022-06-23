@@ -14,7 +14,7 @@ This plugin requires the following plugins:
 * [CiviCRM Profile Sync](https://wordpress.org/plugins/civicrm-wp-profile-sync/)
 * [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/) (preferably [ACF Pro](https://www.advancedcustomfields.com/pro/))
 
-*Custom Field Taxonomy Sync* is also compatible with [CiviCRM Event Organiser](https://github.com/christianwach/civicrm-event-organiser). You will need version 0.7.2 or greater.
+*Custom Field Taxonomy Sync* is also compatible with [CiviCRM Event Organiser](https://github.com/christianwach/civicrm-event-organiser). You will need version 0.7.2 or greater. For the moment, you will also need CiviCRM Profile Sync and Advanced Custom Fields for sync to take place.
 
 This plugin also requires the following patch to CiviCRM:
 
