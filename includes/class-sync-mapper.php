@@ -326,7 +326,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// The Contact API requires Contact Type.
 		if ( $entity_name === 'Contact' ) {
-			$params['contact_type'] = $custom_group['extends'];
+			$params['contact_type'] = $entity['contact_type'];
 		}
 
 		// The Activity API requires "source_contact_id".
