@@ -334,8 +334,8 @@ class WPCV_Tax_Field_Sync_Mapper {
 			$params['source_contact_id'] = $entity['source_contact_id'];
 		}
 
-		// The Particpant API requires "contact_id" and "event_id".
-		if ( $entity_name === 'Particpant' ) {
+		// The Participant API requires "contact_id" and "event_id".
+		if ( $entity_name === 'Participant' ) {
 			$params['contact_id'] = $entity['contact_id'];
 			$params['event_id'] = $entity['event_id'];
 		}
