@@ -62,6 +62,11 @@ The second (which is necessary of you want to add more than one sync relationshi
  */
 function wpcv_tax_field_sync_init() {
 
+	// Make sure that the "Custom Field Taxonomy Sync" plugin is active.
+	if ( ! function_exists( 'wpcv_tax_field_register' ) ) {
+		return;
+	}
+
 	// Register a Sync relationship.
 	$taxonomy = 'event-type';
 	$custom_field_id = 7;
