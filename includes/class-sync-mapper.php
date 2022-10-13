@@ -116,7 +116,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	}
 
 	/**
-	 * Register CiviCRM hooks.
+	 * Register WordPress hooks.
 	 *
 	 * These hooks are called when Post ACF Fields are saved. They are also called
 	 * when Manual Sync runs in CiviCRM Profile Sync and CiviCRM Event Organiser.
@@ -635,10 +635,12 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Build mapping between the Option Value ID and the value.
 		$mapping = [];
-		foreach ( $values as $key => $value ) {
-			foreach ( $option_values as $option_value ) {
-				if ( $option_value['value'] === $value ) {
-					$mapping[ $option_value['id'] ] = $value;
+		if ( is_array( $values ) ) {
+			foreach ( $values as $key => $value ) {
+				foreach ( $option_values as $option_value ) {
+					if ( $option_value['value'] === $value ) {
+						$mapping[ $option_value['id'] ] = $value;
+					}
 				}
 			}
 		}
