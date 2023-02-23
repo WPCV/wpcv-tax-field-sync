@@ -414,6 +414,8 @@ class WPCV_Tax_Field_Sync_Mapper {
 			$values = $field['value'];
 			if ( is_string( $values ) && false !== strpos( $values, CRM_Core_DAO::VALUE_SEPARATOR ) ) {
 				$values = CRM_Utils_Array::explodePadded( $field['value'] );
+			} elseif ( is_string( $values ) && ! empty( $values ) ) {
+				$values = [ $field['value'] ];
 			} else {
 				$values = [];
 			}
@@ -617,15 +619,17 @@ class WPCV_Tax_Field_Sync_Mapper {
 			$values = $entity->$code;
 		}
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'values' => $values,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
+		// Need to see why this is happening.
+		if ( ! is_array( $values ) ) {
+			$e = new Exception();
+			$trace = $e->getTraceAsString();
+			error_log( print_r( [
+				'method' => __METHOD__,
+				'values' => $values,
+				'entity' => $entity,
+				//'backtrace' => $trace,
+			], true ) );
+		}
 
 		// Get the Option Values for the synced Custom Field ID.
 		$option_values = $this->civicrm->option_values_get_by_field_id( $this->civicrm->custom_field_id );
