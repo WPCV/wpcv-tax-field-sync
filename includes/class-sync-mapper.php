@@ -410,12 +410,17 @@ class WPCV_Tax_Field_Sync_Mapper {
 		$new_values = [];
 		foreach( $synced_custom_fields as $field ) {
 
-			// Convert if the value has the special CiviCRM array-like format.
-			$values = $field['value'];
-			if ( is_string( $values ) && false !== strpos( $values, CRM_Core_DAO::VALUE_SEPARATOR ) ) {
-				$values = CRM_Utils_Array::explodePadded( $field['value'] );
-			} elseif ( is_string( $values ) && ! empty( $values ) ) {
-				$values = [ $field['value'] ];
+			// Convert the field value(s) to an array. Allow zero values.
+			if ( ! empty( $field['value'] ) || 0 === $field['value'] || '0' === $field['value'] ) {
+				if ( is_array( $field['value'] ) ) {
+					$values = $field['value'];
+				} else {
+					if ( is_string( $field['value'] ) && false !== strpos( $field['value'], CRM_Core_DAO::VALUE_SEPARATOR ) ) {
+						$values = CRM_Utils_Array::explodePadded( $field['value'] );
+					} else {
+						$values = [ $field['value'] ];
+					}
+				}
 			} else {
 				$values = [];
 			}
