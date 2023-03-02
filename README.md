@@ -38,6 +38,18 @@ If you have cloned the code from GitHub, it is assumed that you know what you're
 
 ## Setup
 
+### The Custom Field
+
+Create a Custom Field in CiviCRM which allows multiple values, e.g. an Alphanumeric Checkbox maps nicely to a Taxonomy, but other types should work too. *Do not* create any values.
+
+*Please note:* it seems that for some types of Custom Field [this commit](https://github.com/civicrm/civicrm-core/pull/23305/commits/04333740043a724d79867ab00412b48d6712b3de) is required. If you're on CiviCRM 5.58.0 or greater, you're fine. If not, you may need to patch CiviCRM to avoid fatal errors.
+
+### The Taxonomy
+
+Create a Custom Taxonomy in WordPress, either using a plugin or code. *Do not* create any terms.
+
+## Synchronisation
+
 There are two ways to create a sync relationship between a Taxonomy and a Custom Field.
 
 The first is to  add the following to `wp-config.php` or similar on your site:
@@ -82,4 +94,6 @@ add_action( 'cwps/acf/loaded', 'wpcv_tax_field_sync_init', 20 );
 
 You will need to manually discover the Custom Field ID and Taxonomy slug at this stage.
 
-The plugin is now ready to use.
+The plugin is now ready to use, so go ahead and create your WordPress Terms or CiviCRM Custom Field Multiple Choice Options. You should see matching items in the synced Taxonomy or Custom Field.
+
+*Tip:* when creating CiviCRM Custom Field Multiple Choice Options, think of the "Option Label" as the "Term Name" and "Option Value" as the "Term Slug".
