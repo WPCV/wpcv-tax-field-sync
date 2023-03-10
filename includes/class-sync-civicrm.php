@@ -1722,7 +1722,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	}
 
 	/**
-	 * Gets the full CiviCRM Entity for a given Entity ID and Entity Type.
+	 * Updates the CiviCRM Entity for a given Entity name.
 	 *
 	 * @since 1.0
 	 *
