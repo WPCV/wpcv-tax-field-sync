@@ -5,7 +5,6 @@
  * Handles CiviCRM functionality.
  *
  * @package WPCV_Tax_Field_Sync
- * @since 1.0
  */
 
 // Exit if accessed directly.
@@ -16,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * A class that encapsulates CiviCRM functionality.
  *
- * @package WPCV_Tax_Field_Sync
+ * @since 1.0
  */
 class WPCV_Tax_Field_Sync_CiviCRM {
 
@@ -25,7 +24,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $sync The Sync object.
+	 * @var object
 	 */
 	public $sync;
 
@@ -34,7 +33,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $wordpress The WordPress object.
+	 * @var object
 	 */
 	public $wordpress;
 
@@ -43,7 +42,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var int $custom_field_id The Custom Field ID.
+	 * @var int
 	 */
 	public $custom_field_id = 0;
 

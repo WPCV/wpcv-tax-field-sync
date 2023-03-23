@@ -5,7 +5,6 @@
  * Handles WordPress functionality.
  *
  * @package WPCV_Tax_Field_Sync
- * @since 1.0
  */
 
 // Exit if accessed directly.
@@ -16,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * A class that encapsulates WordPress functionality.
  *
- * @package WPCV_Tax_Field_Sync
+ * @since 1.0
  */
 class WPCV_Tax_Field_Sync_WordPress {
 
@@ -25,7 +24,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $sync The Sync object.
+	 * @var object
 	 */
 	public $sync;
 
@@ -34,7 +33,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $civicrm The CiviCRM object.
+	 * @var object
 	 */
 	public $civicrm;
 
@@ -43,7 +42,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var string $taxonomy The Taxonomy slug.
+	 * @var string
 	 */
 	public $taxonomy = '';
 
@@ -52,7 +51,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var string $term_meta_key_option_value The Term Meta key.
+	 * @var string
 	 */
 	public $term_meta_key_option_value = '_wpcv_tax_field_sync_option_value_id';
 

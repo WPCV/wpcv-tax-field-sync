@@ -5,7 +5,6 @@
  * Handles sync between a CiviCRM Custom Field and a WordPress Taxonomy.
  *
  * @package WPCV_Tax_Field_Sync
- * @since 1.0
  */
 
 // Exit if accessed directly.
@@ -16,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * A class that handles sync between a CiviCRM Custom Field and a WordPress Taxonomy.
  *
- * @package WPCV_Tax_Field_Sync
+ * @since 1.0
  */
 class WPCV_Tax_Field_Sync_Base {
 
@@ -25,7 +24,7 @@ class WPCV_Tax_Field_Sync_Base {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $civicrm The CiviCRM object.
+	 * @var object
 	 */
 	public $civicrm;
 
@@ -34,7 +33,7 @@ class WPCV_Tax_Field_Sync_Base {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $wordpress The WordPress object.
+	 * @var object
 	 */
 	public $wordpress;
 
@@ -43,7 +42,7 @@ class WPCV_Tax_Field_Sync_Base {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $mapper The Mapper object.
+	 * @var object
 	 */
 	public $mapper;
 

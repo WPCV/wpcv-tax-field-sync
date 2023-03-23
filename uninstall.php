@@ -5,7 +5,6 @@
  * Handles uninstallation functionality.
  *
  * @package WPCV_Tax_Field_Sync
- * @since 1.0
  */
 
 // Exit if accessed directly.

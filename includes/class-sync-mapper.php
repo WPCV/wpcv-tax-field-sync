@@ -5,7 +5,6 @@
  * Handles sync of Custom Field values and Post Taxonomy Terms.
  *
  * @package WPCV_Tax_Field_Sync
- * @since 1.0
  */
 
 // Exit if accessed directly.
@@ -16,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * A class that encapsulates sync of Custom Field values and Post Taxonomy Terms.
  *
- * @package WPCV_Tax_Field_Sync
+ * @since 1.0
  */
 class WPCV_Tax_Field_Sync_Mapper {
 
@@ -25,7 +24,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $sync The Sync object.
+	 * @var object
 	 */
 	public $sync;
 
@@ -34,7 +33,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $civicrm The CiviCRM object.
+	 * @var object
 	 */
 	public $civicrm;
 
@@ -43,7 +42,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var object $wordpress The WordPress object.
+	 * @var object
 	 */
 	public $wordpress;
 

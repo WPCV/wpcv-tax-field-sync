@@ -13,7 +13,6 @@
  * Domain Path: /languages
  *
  * @package WPCV_Tax_Field_Sync
- * @since 1.0
  */
 
 // Exit if accessed directly.
@@ -60,7 +59,7 @@ class WPCV_Tax_Field_Sync {
 	 *
 	 * @since 1.0
 	 * @access public
-	 * @var array $sync_objects The array of Sync objects.
+	 * @var array
 	 */
 	public $sync_objects = [];
 
