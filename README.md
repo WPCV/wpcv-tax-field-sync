@@ -1,10 +1,10 @@
-# Custom Field Taxonomy Sync
+# WPCV Custom Field Taxonomy Sync
 
 Keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
 
 ## Description
 
-*Custom Field Taxonomy Sync* is a WordPress plugin that keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
+*WPCV Custom Field Taxonomy Sync* is a WordPress plugin that keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
 
 ### Requirements
 
@@ -14,7 +14,7 @@ This plugin requires the following plugins:
 * [CiviCRM Profile Sync](https://wordpress.org/plugins/civicrm-wp-profile-sync/)
 * [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/) (preferably [ACF Pro](https://www.advancedcustomfields.com/pro/))
 
-*Custom Field Taxonomy Sync* is also compatible with [CiviCRM Event Organiser](https://github.com/christianwach/civicrm-event-organiser). You will need version 0.7.2 or greater. For the moment, you will also need CiviCRM Profile Sync and Advanced Custom Fields for sync to take place.
+*WPCV Custom Field Taxonomy Sync* is also compatible with [CiviCRM Event Organiser](https://github.com/christianwach/civicrm-event-organiser). You will need version 0.7.2 or greater. For the moment, you will also need CiviCRM Profile Sync and Advanced Custom Fields for sync to take place.
 
 This plugin also requires the following patch to CiviCRM:
 
@@ -56,7 +56,7 @@ The first is to  add the following to `wp-config.php` or similar on your site:
 
 ```php
 /**
- * Custom Field Taxonomy Sync settings.
+ * WPCV Custom Field Taxonomy Sync settings.
  *
  * @see https://github.com/wpcv/wpcv-tax-field-sync
  */
@@ -74,7 +74,7 @@ The second (which is necessary of you want to add more than one sync relationshi
  */
 function wpcv_tax_field_sync_init() {
 
-	// Make sure that the "Custom Field Taxonomy Sync" plugin is active.
+	// Make sure that the "WPCV Custom Field Taxonomy Sync" plugin is active.
 	if ( ! function_exists( 'wpcv_tax_field_register' ) ) {
 		return;
 	}
@@ -88,7 +88,7 @@ function wpcv_tax_field_sync_init() {
 
 }
 
-// Load after Custom Field Taxonomy Sync has loaded. Must be priority 20 or greater.
+// Load after WPCV Custom Field Taxonomy Sync has loaded. Must be priority 20 or greater.
 add_action( 'cwps/acf/loaded', 'wpcv_tax_field_sync_init', 20 );
 ```
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Custom Field Taxonomy Sync
+ * Plugin Name: WPCV Custom Field Taxonomy Sync
  * Plugin URI: https://github.com/WPCV/wpcv-tax-field-sync
  * GitHub Plugin URI: https://github.com/WPCV/wpcv-tax-field-sync
  * Description: Keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
