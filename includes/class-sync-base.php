@@ -81,10 +81,11 @@ class WPCV_Tax_Field_Sync_Base {
 		 *
 		 * @since 1.0
 		 *
+		 * @param object $this The object being initialised.
 		 * @param string $taxonomy The slug of the WordPress Taxonomy.
 		 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
 		 */
-		do_action( 'wpcv_tax_field_sync/base/loaded', $taxonomy, $custom_field_id );
+		do_action( 'wpcv_tax_field_sync/base/loaded', $this, $taxonomy, $custom_field_id );
 
 	}
 
