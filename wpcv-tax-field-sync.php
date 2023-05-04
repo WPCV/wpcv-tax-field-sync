@@ -165,12 +165,13 @@ class WPCV_Tax_Field_Sync {
 	 *
 	 * @param string $taxonomy The slug of the WordPress Taxonomy.
 	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
 	 * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
 	 */
-	public function register_sync( $taxonomy, $custom_field_id ) {
+	public function register_sync( $taxonomy, $custom_field_id, $sync_direction = 'both' ) {
 
 		// Instantiate object.
-		$sync = new WPCV_Tax_Field_Sync_Base( $taxonomy, $custom_field_id );
+		$sync = new WPCV_Tax_Field_Sync_Base( $taxonomy, $custom_field_id, $sync_direction );
 
 		// --<
 		return $sync;
@@ -198,8 +199,13 @@ class WPCV_Tax_Field_Sync {
 		// Set Taxonomy slug.
 		$taxonomy = WPCV_TAX_FIELD_SYNC_TAXONOMY;
 
+		// Set sync direction.
+		$sync_direction = 'both';
+		if ( defined( 'WPCV_TAX_FIELD_SYNC_DIRECTION' ) ) {
+			$sync_direction = WPCV_TAX_FIELD_SYNC_DIRECTION;
+		}
 		// Bootstrap initial Sync object.
-		$this->sync_objects[] = $this->register_sync( $taxonomy, $custom_field_id );
+		$this->sync_objects[] = $this->register_sync( $taxonomy, $custom_field_id, $sync_direction );
 
 	}
 
@@ -286,11 +292,12 @@ register_deactivation_hook( __FILE__, 'wpcv_tax_field_sync_deactivated' );
  *
  * @param string $taxonomy The slug of the WordPress Taxonomy.
  * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+ * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
  * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
  */
-function wpcv_tax_field_register( $taxonomy, $custom_field_id ) {
+function wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction = 'both' ) {
 
 	// Returns a Sync object.
-	return wpcv_tax_field_sync()->register_sync( $taxonomy, $custom_field_id );
+	return wpcv_tax_field_sync()->register_sync( $taxonomy, $custom_field_id, $sync_direction );
 
 }

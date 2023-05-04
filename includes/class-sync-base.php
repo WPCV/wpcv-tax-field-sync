@@ -53,11 +53,12 @@ class WPCV_Tax_Field_Sync_Base {
 	 *
 	 * @param string $taxonomy The slug of the WordPress Taxonomy.
 	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
 	 */
-	public function __construct( $taxonomy, $custom_field_id ) {
+	public function __construct( $taxonomy, $custom_field_id, $sync_direction = 'both' ) {
 
 		// Initialise this object.
-		$this->initialise( $taxonomy, $custom_field_id );
+		$this->initialise( $taxonomy, $custom_field_id, $sync_direction );
 
 	}
 
@@ -68,12 +69,13 @@ class WPCV_Tax_Field_Sync_Base {
 	 *
 	 * @param string $taxonomy The slug of the WordPress Taxonomy.
 	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
 	 */
-	public function initialise( $taxonomy, $custom_field_id ) {
+	public function initialise( $taxonomy, $custom_field_id, $sync_direction = 'both' ) {
 
 		// Bootstrap class.
 		$this->include_files();
-		$this->setup_objects( $taxonomy, $custom_field_id );
+		$this->setup_objects( $taxonomy, $custom_field_id, $sync_direction );
 		$this->register_hooks();
 
 		/**
@@ -110,13 +112,14 @@ class WPCV_Tax_Field_Sync_Base {
 	 *
 	 * @param string $taxonomy The slug of the WordPress Taxonomy.
 	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
 	 */
-	public function setup_objects( $taxonomy, $custom_field_id ) {
+	public function setup_objects( $taxonomy, $custom_field_id, $sync_direction = 'both' ) {
 
 		// Initialise objects.
 		$this->civicrm = new WPCV_Tax_Field_Sync_CiviCRM( $this, $custom_field_id );
 		$this->wordpress = new WPCV_Tax_Field_Sync_WordPress( $this, $taxonomy );
-		$this->mapper = new WPCV_Tax_Field_Sync_Mapper( $this );
+		$this->mapper = new WPCV_Tax_Field_Sync_Mapper( $this, $sync_direction );
 
 	}
 

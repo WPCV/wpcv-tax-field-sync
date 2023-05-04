@@ -47,16 +47,27 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public $wordpress;
 
 	/**
+	 * Sync direction.
+	 *
+	 * @since 1.0
+	 * @access public
+	 * @var string
+	 */
+	public $sync_direction;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0
 	 *
 	 * @param object $sync The Sync object.
+	 * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
 	 */
-	public function __construct( $sync ) {
+	public function __construct( $sync, $sync_direction = 'both' ) {
 
 		// Store reference to Sync object.
 		$this->sync = $sync;
+		$this->sync_direction = $sync_direction;
 
 		// Init when this plugin is loaded.
 		add_action( 'wpcv_tax_field_sync/base/loaded', [ $this, 'initialise' ] );
@@ -136,6 +147,11 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 */
 	public function hooks_wordpress_add() {
 
+		// Bail if sync is CiviCRM-to-WordPress.
+		if ( 'civicrm_to_wp' === $this->sync_direction ) {
+			return;
+		}
+
 		// Intercept Post ACF Fields saved.
 		add_action( 'cwps/acf/activity/acf_fields_saved', [ $this, 'post_saved' ], 20 );
 		add_action( 'cwps/acf/contact/acf_fields_saved', [ $this, 'post_saved' ], 20 );
@@ -168,6 +184,11 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 */
 	public function hooks_civicrm_add() {
 
+		// Bail if sync is WordPress-to-CiviCRM.
+		if ( 'wp_to_civicrm' === $this->sync_direction ) {
+			return;
+		}
+
 		// Hook into Profile Sync after Custom Fields have been edited.
 		add_action( 'cwps/acf/civicrm/custom_field/custom_edited', [ $this, 'custom_edited' ], 10, 2 );
 
@@ -191,6 +212,11 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 * @since 1.0
 	 */
 	public function hooks_civicrm_wordpress_add() {
+
+		// Bail if sync is WordPress-to-CiviCRM.
+		if ( 'wp_to_civicrm' === $this->sync_direction ) {
+			return;
+		}
 
 		// Listen for CiviCRM Entities being synced to WordPress Posts.
 		add_action( 'cwps/acf/post/activity/sync', [ $this, 'entity_sync_to_post' ], 10 );

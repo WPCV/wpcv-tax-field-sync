@@ -64,6 +64,14 @@ define( 'WPCV_TAX_FIELD_SYNC_TAXONOMY', 'my-tax-slug' );
 define( 'WPCV_TAX_FIELD_SYNC_CUSTOM_FIELD_ID', 145 );
 ```
 
+You can optionally define a sync direction:
+
+```php
+define( 'WPCV_TAX_FIELD_SYNC_DIRECTION', 'wp_to_civicrm' );
+```
+
+The value can be one of `both`, `wp_to_civicrm` or `civicrm_to_wp`. Default is "both".
+
 The second (which is necessary of you want to add more than one sync relationship) is to use a filter:
 
 ```php
@@ -82,7 +90,8 @@ function wpcv_tax_field_sync_init() {
 	// Register a Sync relationship.
 	$taxonomy = 'event-type';
 	$custom_field_id = 7;
-	$sync_object = wpcv_tax_field_register( $taxonomy, $custom_field_id );
+	$sync_direction = 'wp_to_civicrm'; // Can be "both", "wp_to_civicrm" or "civicrm_to_wp". Default is "both".
+	$sync_object = wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction );
 
 	// Register more Sync relationships here...
 
