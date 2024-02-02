@@ -1509,7 +1509,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		try {
 			// Call the API for this Entity.
 			$result = civicrm_api( $entity, 'get', $params );
-		} catch ( CiviCRM_API3_Exception $e ) {
+		} catch ( Exception $e ) {
 			// Bail if there's an error.
 			return $values;
 		}
@@ -1691,7 +1691,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		try {
 			// Call the API for this Entity.
 			$result = civicrm_api( $entity_name, 'get', $params );
-		} catch ( CiviCRM_API3_Exception $e ) {
+		} catch ( Exception $e ) {
 			// Bail if there's an error.
 			return $entity;
 		}
@@ -1747,7 +1747,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		try {
 			// Call the API for this Entity.
 			$result = civicrm_api( $entity_name, 'create', $params );
-		} catch ( CiviCRM_API3_Exception $e ) {
+		} catch ( Exception $e ) {
 			// Bail if there's an error.
 			return $entity;
 		}
