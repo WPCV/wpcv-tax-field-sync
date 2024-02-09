@@ -94,7 +94,7 @@ class WPCV_Tax_Field_Sync {
 
 		// Only do this once.
 		static $done;
-		if ( isset( $done ) && $done === true ) {
+		if ( isset( $done ) && true === $done ) {
 			return;
 		}
 
@@ -167,7 +167,7 @@ class WPCV_Tax_Field_Sync {
 	 * @since 1.0.1
 	 *
 	 * @param string $taxonomy The slug of the WordPress Taxonomy.
-	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param int    $custom_field_id The numeric ID of the CiviCRM Custom Field.
 	 * @return WPCV_Tax_Field_Sync_Base|bool $sync The Sync object reference, or false if not found.
 	 */
 	public function get_sync( $taxonomy, $custom_field_id ) {
@@ -224,14 +224,14 @@ class WPCV_Tax_Field_Sync {
 		foreach ( $this->sync_objects as $sync_object ) {
 
 			// Add those that match the Custom Field ID.
-			if (! empty( $query['custom_field_id'] ) ) {
+			if ( ! empty( $query['custom_field_id'] ) ) {
 				if ( (int) $query['custom_field_id'] === $sync_object->civicrm->custom_field_id ) {
 					$sync_objects[] = $sync_object;
 				}
 			}
 
 			// Add those that match the Taxonomy.
-			if (! empty( $query['taxonomy'] ) ) {
+			if ( ! empty( $query['taxonomy'] ) ) {
 				if ( $query['taxonomy'] === $sync_object->wordpress->taxonomy ) {
 					$sync_objects[] = $sync_object;
 				}
@@ -250,7 +250,7 @@ class WPCV_Tax_Field_Sync {
 	 * @since 1.0
 	 *
 	 * @param string $taxonomy The slug of the WordPress Taxonomy.
-	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param int    $custom_field_id The numeric ID of the CiviCRM Custom Field.
 	 * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
 	 * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
 	 */
@@ -380,7 +380,7 @@ register_deactivation_hook( __FILE__, 'wpcv_tax_field_sync_deactivated' );
  * @since 1.0
  *
  * @param string $taxonomy The slug of the WordPress Taxonomy.
- * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+ * @param int    $custom_field_id The numeric ID of the CiviCRM Custom Field.
  * @param string $sync_direction The sync direction. Can be 'both', 'wp_to_civicrm' or 'civicrm_to_wp'. Default 'both'.
  * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
  */
@@ -397,7 +397,7 @@ function wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction =
  * @since 1.0.1
  *
  * @param string $taxonomy The slug of the WordPress Taxonomy.
- * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+ * @param int    $custom_field_id The numeric ID of the CiviCRM Custom Field.
  * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
  */
 function wpcv_tax_field_get( $taxonomy, $custom_field_id ) {

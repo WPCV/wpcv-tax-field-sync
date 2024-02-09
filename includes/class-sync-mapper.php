@@ -66,7 +66,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public function __construct( $sync, $sync_direction = 'both' ) {
 
 		// Store reference to Sync object.
-		$this->sync = $sync;
+		$this->sync           = $sync;
 		$this->sync_direction = $sync_direction;
 
 		// Init when this plugin is loaded.
@@ -82,7 +82,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public function initialise() {
 
 		// Store references.
-		$this->civicrm = $this->sync->civicrm;
+		$this->civicrm   = $this->sync->civicrm;
 		$this->wordpress = $this->sync->wordpress;
 
 		// Bootstrap class.
@@ -118,10 +118,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 */
 	public function unregister_hooks() {
 
-		// Remove all hooks.
+		// No need to remove sync hooks.
 		$this->hooks_civicrm_remove();
 		$this->hooks_wordpress_remove();
-		// No need to remove sync hooks.
 
 	}
 
@@ -244,7 +243,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Bail if the edited Post does not have the synced Taxonomy.
 		$taxonomies = get_post_taxonomies( $args['post_id'] );
-		if ( ! in_array( $this->wordpress->taxonomy, $taxonomies ) ) {
+		if ( ! in_array( $this->wordpress->taxonomy, $taxonomies, true ) ) {
 			return;
 		}
 
@@ -260,7 +259,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		*/
 
 		// Get the Terms assigned to the Post.
-		$terms = $this->wordpress->terms_get_for_post( $args['post_id'] );
+		$terms      = $this->wordpress->terms_get_for_post( $args['post_id'] );
 		$term_names = wp_list_pluck( $terms, 'name' );
 
 		/*
@@ -293,23 +292,23 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 			case 'cwps/acf/activity/acf_fields_saved':
 				$entity_name = 'Activity';
-				$entity_id = $args['activity_id'];
+				$entity_id   = $args['activity_id'];
 				break;
 
 			case 'cwps/acf/contact/acf_fields_saved':
 				$entity_name = 'Contact';
-				$entity_id = $args['contact_id'];
+				$entity_id   = $args['contact_id'];
 				break;
 
 			case 'cwps/acf/participant-cpt/acf_fields_saved':
 			case 'cwps/acf/participant/acf_fields_saved':
 				$entity_name = 'Participant';
-				$entity_id = $args['participant_id'];
+				$entity_id   = $args['participant_id'];
 				break;
 
 			case 'ceo/acf/event/acf_fields_saved':
 				$entity_name = 'Event';
-				$entity_id = $args['civi_event_id'];
+				$entity_id   = $args['civi_event_id'];
 				break;
 
 		}
@@ -344,25 +343,25 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Init params.
 		$params = [
-			'version' => 3,
-			'id' => $entity_id,
+			'version'                                   => 3,
+			'id'                                        => $entity_id,
 			'custom_' . $this->civicrm->custom_field_id => $term_names,
 		];
 
 		// The Contact API requires Contact Type.
-		if ( $entity_name === 'Contact' ) {
+		if ( 'Contact' === $entity_name ) {
 			$params['contact_type'] = $entity['contact_type'];
 		}
 
 		// The Activity API requires "source_contact_id".
-		if ( $entity_name === 'Activity' ) {
+		if ( 'Activity' === $entity_name ) {
 			$params['source_contact_id'] = $entity['source_contact_id'];
 		}
 
 		// The Participant API requires "contact_id" and "event_id".
-		if ( $entity_name === 'Participant' ) {
+		if ( 'Participant' === $entity_name ) {
 			$params['contact_id'] = $entity['contact_id'];
-			$params['event_id'] = $entity['event_id'];
+			$params['event_id']   = $entity['event_id'];
 		}
 
 		/*
@@ -395,7 +394,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 * @since 1.0
 	 *
 	 * @param array|bool $post_ids The array of mapped Post IDs, or false if not mapped.
-	 * @param array $args The array of CiviCRM params.
+	 * @param array      $args The array of CiviCRM params.
 	 */
 	public function custom_edited( $post_ids, $args ) {
 
@@ -433,7 +432,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Build array of new values.
 		$new_values = [];
-		foreach( $synced_custom_fields as $field ) {
+		foreach ( $synced_custom_fields as $field ) {
 
 			// Convert the field value(s) to an array. Allow zero values.
 			if ( ! empty( $field['value'] ) || 0 === $field['value'] || '0' === $field['value'] ) {
@@ -549,7 +548,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 			], true ) );
 			*/
 
-			if ( in_array( $this->wordpress->taxonomy, $taxonomies ) ) {
+			if ( in_array( $this->wordpress->taxonomy, $taxonomies, true ) ) {
 				$this->wordpress->terms_update_for_post( $post_id, $term_ids );
 			}
 
@@ -578,7 +577,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Bail if the edited Post does not have the synced Taxonomy.
 		$taxonomies = get_post_taxonomies( $args['post_id'] );
-		if ( ! in_array( $this->wordpress->taxonomy, $taxonomies ) ) {
+		if ( ! in_array( $this->wordpress->taxonomy, $taxonomies, true ) ) {
 			return;
 		}
 
@@ -599,27 +598,27 @@ class WPCV_Tax_Field_Sync_Mapper {
 			// Handle Profile Sync actions.
 			case 'cwps/acf/post/activity/sync':
 				$entity_name = 'Activity';
-				$entity_id = $args['objectId'];
-				$entity = $args['objectRef'];
+				$entity_id   = $args['objectId'];
+				$entity      = $args['objectRef'];
 				break;
 
 			case 'cwps/acf/post/contact/sync':
 				$entity_name = 'Contact';
-				$entity_id = $args['objectId'];
-				$entity = $args['objectRef'];
+				$entity_id   = $args['objectId'];
+				$entity      = $args['objectRef'];
 				break;
 
 			case 'cwps/acf/post/participant/sync':
 				$entity_name = 'Participant';
-				$entity_id = $args['objectId'];
-				$entity = $args['objectRef'];
+				$entity_id   = $args['objectId'];
+				$entity      = $args['objectRef'];
 				break;
 
 			// Handle CEO action.
 			case 'civicrm_event_organiser_admin_civi_to_eo_sync':
 				$entity_name = 'Event';
-				$entity_id = $args['civi_event_id'];
-				$entity = (object) $args['civi_event'];
+				$entity_id   = $args['civi_event_id'];
+				$entity      = (object) $args['civi_event'];
 				break;
 
 		}
@@ -640,8 +639,8 @@ class WPCV_Tax_Field_Sync_Mapper {
 		$code = 'custom_' . $this->civicrm->custom_field_id;
 		if ( ! isset( $entity->$code ) ) {
 			$custom_field_ids = [ $this->civicrm->custom_field_id ];
-			$result = $this->civicrm->custom_field_values_get_for_entity( $entity_name, $entity_id, $custom_field_ids );
-			$values = [];
+			$result           = $this->civicrm->custom_field_values_get_for_entity( $entity_name, $entity_id, $custom_field_ids );
+			$values           = [];
 			if ( isset( $result[ $this->civicrm->custom_field_id ] ) ) {
 				$values = $result[ $this->civicrm->custom_field_id ];
 			}
@@ -651,14 +650,14 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Need to see why this is happening.
 		if ( ! is_array( $values ) ) {
-			$e = new Exception();
+			$e     = new Exception();
 			$trace = $e->getTraceAsString();
-			error_log( print_r( [
-				'method' => __METHOD__,
-				'values' => $values,
-				'entity' => $entity,
-				//'backtrace' => $trace,
-			], true ) );
+			$this->sync->log_error( [
+				'method'    => __METHOD__,
+				'values'    => $values,
+				'entity'    => $entity,
+				'backtrace' => $trace,
+			] );
 		}
 
 		// Get the Option Values for the synced Custom Field ID.

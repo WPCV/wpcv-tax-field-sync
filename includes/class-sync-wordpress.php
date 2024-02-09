@@ -153,8 +153,8 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $term_id The numeric ID of the new Term.
-	 * @param array $tt_id The numeric ID of the Term Taxonomy.
+	 * @param array  $term_id The numeric ID of the new Term.
+	 * @param array  $tt_id The numeric ID of the Term Taxonomy.
 	 * @param string $taxonomy Should be (an array containing) the Taxonomy slug.
 	 * @return int $taxonomy Should be (an array containing) the Taxonomy slug.
 	 */
@@ -193,7 +193,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $term_id The numeric ID of the new Term.
+	 * @param int    $term_id The numeric ID of the new Term.
 	 * @param string $taxonomy The Taxonomy containing the Term.
 	 */
 	public function term_edited_pre( $term_id, $taxonomy ) {
@@ -227,8 +227,8 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $term_id The numeric ID of the edited Term.
-	 * @param array $tt_id The numeric ID of the edited Term Taxonomy.
+	 * @param int    $term_id The numeric ID of the edited Term.
+	 * @param array  $tt_id The numeric ID of the edited Term Taxonomy.
 	 * @param string $taxonomy Should be (an array containing) the Taxonomy slug.
 	 */
 	public function term_edited( $term_id, $tt_id, $taxonomy ) {
@@ -270,7 +270,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $deleted_term_id The numeric ID of the Term about to be deleted.
+	 * @param int    $deleted_term_id The numeric ID of the Term about to be deleted.
 	 * @param string $taxonomy The name of the Taxonomy.
 	 */
 	public function term_deleted_pre( $deleted_term_id, $taxonomy ) {
@@ -323,7 +323,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Construct args.
 		$args = [
-			'slug' => sanitize_title( $option_value['name'] ),
+			'slug'        => sanitize_title( $option_value['name'] ),
 			'description' => $description,
 		];
 
@@ -410,11 +410,11 @@ class WPCV_Tax_Field_Sync_WordPress {
 		}
 
 		// If we don't get one.
-		if ( $term_id === false ) {
+		if ( false === $term_id ) {
 
 			// Create the Term.
 			$result = $this->term_create( $new_option_value );
-			if ( $result === false ) {
+			if ( false === $result ) {
 				return $result;
 			}
 
@@ -439,8 +439,8 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Construct Term.
 		$args = [
-			'name' => $new_option_value['label'],
-			'slug' => sanitize_title( $new_option_value['name'] ),
+			'name'        => $new_option_value['label'],
+			'slug'        => sanitize_title( $new_option_value['name'] ),
 			'description' => $description,
 		];
 
@@ -567,13 +567,13 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Query Terms for the Term with the ID of the Option Value in meta data.
 		$args = [
-			'taxonomy' => $this->taxonomy,
+			'taxonomy'   => $this->taxonomy,
 			'hide_empty' => false,
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query' => [
 				[
-					'key' => $this->term_meta_key_option_value,
-					'value' => $option_value_id,
+					'key'     => $this->term_meta_key_option_value,
+					'value'   => $option_value_id,
 					'compare' => '=',
 				],
 			],
@@ -589,14 +589,14 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Log a message and bail if there's an error.
 		if ( is_wp_error( $terms ) ) {
-			$e = new Exception();
+			$e     = new Exception();
 			$trace = $e->getTraceAsString();
 			$this->sync->log_error( [
-				'method' => __METHOD__,
-				'message' => $terms->get_error_message(),
-				'term' => $term,
+				'method'       => __METHOD__,
+				'message'      => $terms->get_error_message(),
+				'term'         => $term,
 				'option_value' => $option_value,
-				'backtrace' => $trace,
+				'backtrace'    => $trace,
 			] );
 			return false;
 		}
@@ -654,7 +654,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $post_id The numeric ID of the Post.
+	 * @param int   $post_id The numeric ID of the Post.
 	 * @param array $term_ids The array of numeric Term IDs.
 	 */
 	public function terms_update_for_post( $post_id, $term_ids ) {
@@ -729,7 +729,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Log something if there's an error.
 		// phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-		if ( $meta_id === false ) {
+		if ( false === $meta_id ) {
 
 			/*
 			 * This probably means that the Term already has its "term meta" set.
@@ -754,14 +754,14 @@ class WPCV_Tax_Field_Sync_WordPress {
 		if ( is_wp_error( $meta_id ) ) {
 
 			// Log error message.
-			$e = new Exception();
+			$e     = new Exception();
 			$trace = $e->getTraceAsString();
 			$this->sync->log_error( [
-				'method' => __METHOD__,
-				'message' => $meta_id->get_error_message(),
-				'term_id' => $term_id,
+				'method'          => __METHOD__,
+				'message'         => $meta_id->get_error_message(),
+				'term_id'         => $term_id,
 				'option_value_id' => $option_value_id,
-				'backtrace' => $trace,
+				'backtrace'       => $trace,
 			] );
 
 			// Also overwrite return.

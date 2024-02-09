@@ -54,7 +54,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 	public function to_wp( $args, $assoc_args ) {
 
 		// Grab associative arguments.
-		$taxonomy = (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'tax', '' );
+		$taxonomy        = (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'tax', '' );
 		$custom_field_id = (int) \WP_CLI\Utils\get_flag_value( $assoc_args, 'cf', 0 );
 
 		// Sanity checks.
@@ -100,23 +100,23 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		}
 
 		// Convert the ArrayObject to a simple array.
-		$array = array_values( $custom_fields->getArrayCopy() );
+		$array        = array_values( $custom_fields->getArrayCopy() );
 		$custom_field = array_pop( $array );
 
 		// Build the rows.
-		$rows = [];
+		$rows   = [];
 		$fields = [ 'Source', 'Name' ];
 		$rows[] = [
 			'Source' => 'Custom Field',
-			'Name' => $custom_field['label'],
+			'Name'   => $custom_field['label'],
 		];
 		$rows[] = [
 			'Source' => 'Taxonomy',
-			'Name' => $tax_object->label,
+			'Name'   => $tax_object->label,
 		];
 
 		// Render feedback.
-		$args = [ 'format' => 'table' ];
+		$args      = [ 'format' => 'table' ];
 		$formatter = new \WP_CLI\Formatter( $args, $fields );
 		$formatter->display_items( $rows );
 
@@ -148,8 +148,8 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		// Create a sync object if none exists.
 		if ( empty( $sync_object ) ) {
 
-			$sync_direction = 'civicrm_to_wp'; // Can be "both", "wp_to_civicrm" or "wp_to_civicrm".
-			$sync_object = wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction );
+			$sync_direction  = 'civicrm_to_wp'; // Can be "both", "wp_to_civicrm" or "wp_to_civicrm".
+			$sync_object     = wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction );
 			$new_sync_object = true;
 
 			// Show some helpful code.
@@ -186,8 +186,8 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		}
 
 		// Build the rows.
-		$rows = [];
-		$fields = [ 'Option Value', 'Option Value ID', 'Term', 'Term ID' ];
+		$rows                  = [];
+		$fields                = [ 'Option Value', 'Option Value ID', 'Term', 'Term ID' ];
 		$option_values_to_sync = [];
 		foreach ( $option_values as $option_value ) {
 
@@ -198,10 +198,10 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 			}
 
 			$rows[] = [
-				'Option Value' => $option_value['label'],
+				'Option Value'    => $option_value['label'],
 				'Option Value ID' => $option_value['id'],
-				'Term' => ! empty( $term ) ? $term->name : '',
-				'Term ID' => ! empty( $term->term_id ) ? $term->term_id : '',
+				'Term'            => ! empty( $term ) ? $term->name : '',
+				'Term ID'         => ! empty( $term->term_id ) ? $term->term_id : '',
 			];
 
 		}
@@ -214,7 +214,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		}
 
 		// Render feedback.
-		$args = [ 'format' => 'table' ];
+		$args      = [ 'format' => 'table' ];
 		$formatter = new \WP_CLI\Formatter( $args, $fields );
 		$formatter->display_items( $rows );
 
@@ -260,7 +260,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 	public function to_civicrm( $args, $assoc_args ) {
 
 		// Grab associative arguments.
-		$taxonomy = (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'tax', '' );
+		$taxonomy        = (string) \WP_CLI\Utils\get_flag_value( $assoc_args, 'tax', '' );
 		$custom_field_id = (int) \WP_CLI\Utils\get_flag_value( $assoc_args, 'cf', 0 );
 
 		// Sanity checks.
@@ -306,23 +306,23 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		}
 
 		// Convert the ArrayObject to a simple array.
-		$array = array_values( $custom_fields->getArrayCopy() );
+		$array        = array_values( $custom_fields->getArrayCopy() );
 		$custom_field = array_pop( $array );
 
 		// Build the rows.
-		$rows = [];
+		$rows   = [];
 		$fields = [ 'Source', 'Name' ];
 		$rows[] = [
 			'Source' => 'Taxonomy',
-			'Name' => $tax_object->label,
+			'Name'   => $tax_object->label,
 		];
 		$rows[] = [
 			'Source' => 'Custom Field',
-			'Name' => $custom_field['label'],
+			'Name'   => $custom_field['label'],
 		];
 
 		// Render feedback.
-		$args = [ 'format' => 'table' ];
+		$args      = [ 'format' => 'table' ];
 		$formatter = new \WP_CLI\Formatter( $args, $fields );
 		$formatter->display_items( $rows );
 
@@ -354,8 +354,8 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		// Create a sync object if none exists.
 		if ( empty( $sync_object ) ) {
 
-			$sync_direction = 'wp_to_civicrm'; // Can be "both", "wp_to_civicrm" or "wp_to_civicrm".
-			$sync_object = wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction );
+			$sync_direction  = 'wp_to_civicrm'; // Can be "both", "wp_to_civicrm" or "wp_to_civicrm".
+			$sync_object     = wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction );
 			$new_sync_object = true;
 
 			// Show some helpful code.
@@ -384,8 +384,8 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		WP_CLI::log( WP_CLI::colorize( '%GGathering Term information:%n' ) );
 
 		// Query for all Terms.
-		$args = [
-			'taxonomy' => $taxonomy,
+		$args  = [
+			'taxonomy'   => $taxonomy,
 			'hide_empty' => false,
 		];
 		$terms = get_terms( $args );
@@ -403,10 +403,10 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Do we have any Terms to sync?
 		$terms_to_sync = [];
-		$key = $sync_object->wordpress->term_meta_key_option_value;
+		$key           = $sync_object->wordpress->term_meta_key_option_value;
 
 		// Build the rows.
-		$rows = [];
+		$rows   = [];
 		$fields = [ 'Term', 'Term ID', 'Option Value ID' ];
 		foreach ( $terms as $term ) {
 
@@ -417,8 +417,8 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 			}
 
 			$rows[] = [
-				'Term' => $term->name,
-				'Term ID' => $term->term_id,
+				'Term'            => $term->name,
+				'Term ID'         => $term->term_id,
 				'Option Value ID' => ! empty( $option_value_id ) ? $option_value_id : '',
 			];
 
@@ -432,7 +432,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		}
 
 		// Render feedback.
-		$args = [ 'format' => 'table' ];
+		$args      = [ 'format' => 'table' ];
 		$formatter = new \WP_CLI\Formatter( $args, $fields );
 		$formatter->display_items( $rows );
 

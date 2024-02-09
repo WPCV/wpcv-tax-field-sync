@@ -52,7 +52,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 * @since 1.0
 	 *
 	 * @param object $sync The Sync object.
-	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @param int    $custom_field_id The numeric ID of the CiviCRM Custom Field.
 	 */
 	public function __construct( $sync, $custom_field_id = 0 ) {
 
@@ -283,16 +283,16 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Build params to get Option Group data.
 		$params = [
-			'version' => 3,
+			'version'    => 3,
 			'sequential' => 1,
-			'id' => $option_group_id,
+			'id'         => $option_group_id,
 		];
 
 		// Call the CiviCRM API.
 		$result = civicrm_api( 'OptionGroup', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $option_group;
 		}
 
@@ -427,8 +427,8 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Build params to get Option Value data.
 		$params = [
-			'version' => 3,
-			'sequential' => 1,
+			'version'         => 3,
+			'sequential'      => 1,
 			'option_group_id' => $option_group_id,
 		];
 
@@ -436,7 +436,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$result = civicrm_api( 'OptionValue', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $option_values;
 		}
 
@@ -473,16 +473,16 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Build params to get Option Value data.
 		$params = [
-			'version' => 3,
+			'version'    => 3,
 			'sequential' => 1,
-			'id' => $option_value_id,
+			'id'         => $option_value_id,
 		];
 
 		// Call the CiviCRM API.
 		$result = civicrm_api( 'OptionValue', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $option_value;
 		}
 
@@ -505,7 +505,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 * @since 1.0
 	 *
 	 * @param mixed $value The value of a CiviCRM Option Value.
-	 * @param int $option_group_id The numeric ID of the CiviCRM Option Group.
+	 * @param int   $option_group_id The numeric ID of the CiviCRM Option Group.
 	 * @return array|bool $option_value CiviCRM Event Type data, or false on failure.
 	 */
 	public function option_value_get_by_value( $value, $option_group_id ) {
@@ -517,16 +517,16 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Define params to get item.
 		$params = [
-			'version' => 3,
+			'version'         => 3,
 			'option_group_id' => $option_group_id,
-			'value' => $value,
+			'value'           => $value,
 		];
 
 		// Call the CiviCRM API.
 		$result = civicrm_api( 'OptionValue', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return false;
 		}
 
@@ -579,7 +579,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Get the ID from Term meta.
 		$option_value_id = $this->wordpress->option_value_id_get( $term->term_id );
-		if ( $option_value_id === false ) {
+		if ( false === $option_value_id ) {
 			return $option_value;
 		}
 
@@ -713,13 +713,13 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Get the full Option Value.
 		$option_value_full = $this->option_value_get_by_id( $option_value->id );
-		if ( $option_value_full === false ) {
+		if ( false === $option_value_full ) {
 			return;
 		}
 
 		// Add description if present.
 		$description = '';
-		if ( ! empty( $option_value_full['description'] ) && $option_value_full['description'] !== 'null' ) {
+		if ( ! empty( $option_value_full['description'] ) && 'null' !== $option_value_full['description'] ) {
 			$description = $option_value_full['description'];
 		}
 
@@ -731,11 +731,11 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct Term data.
 		$term_data = [
-			'id' => $option_value->id,
-			'label' => $option_value_full['label'],
-			'name' => $option_value_full['label'],
+			'id'          => $option_value->id,
+			'label'       => $option_value_full['label'],
+			'name'        => $option_value_full['label'],
 			'description' => $description,
-			'is_active' => $is_active,
+			'is_active'   => $is_active,
 		];
 
 		/*
@@ -857,13 +857,13 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Get the full Option Value.
 		$option_value_full = $this->option_value_get_by_id( $option_value->id );
-		if ( $option_value_full === false ) {
+		if ( false === $option_value_full ) {
 			return;
 		}
 
 		// Add description if present.
 		$description = '';
-		if ( ! empty( $option_value_full['description'] ) && $option_value_full['description'] !== 'null' ) {
+		if ( ! empty( $option_value_full['description'] ) && 'null' !== $option_value_full['description'] ) {
 			$description = $option_value_full['description'];
 		}
 
@@ -875,11 +875,11 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct Term data.
 		$term_data = [
-			'id' => $option_value->id,
-			'label' => $option_value_full['label'],
-			'name' => $option_value_full['label'],
+			'id'          => $option_value->id,
+			'label'       => $option_value_full['label'],
+			'name'        => $option_value_full['label'],
 			'description' => $description,
-			'is_active' => $is_active,
+			'is_active'   => $is_active,
 		];
 
 		/*
@@ -941,7 +941,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Bail if there's no Term to delete.
 		$term = $this->wordpress->term_get_by_option_value_id( $option_value->id );
-		if ( $term === false ) {
+		if ( false === $term ) {
 			return;
 		}
 
@@ -994,10 +994,10 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Define params for the Option Value.
 		$params = [
-			'version' => 3,
+			'version'         => 3,
 			'option_group_id' => $custom_field['option_group_id'],
-			'label' => $new_term->name,
-			'value' => $new_term->name,
+			'label'           => $new_term->name,
+			'value'           => $new_term->name,
 		];
 
 		// If there is a description, apply content filters and add to params.
@@ -1009,7 +1009,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$option_value_id = $this->option_value_id_get_by_term( $new_term );
 
 		// Trigger update if we find a synced Option Value ID.
-		if ( $option_value_id !== false ) {
+		if ( false !== $option_value_id ) {
 			$params['id'] = $option_value_id;
 		}
 
@@ -1023,13 +1023,13 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$this->hooks_civicrm_add();
 
 		// Log and bail if there's an error.
-		if ( ! empty( $result['is_error'] ) ) {
-			$e = new Exception();
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
+			$e     = new Exception();
 			$trace = $e->getTraceAsString();
 			$this->sync->log_error( [
-				'method' => __METHOD__,
-				'message' => $result['error_message'],
-				'params' => $params,
+				'method'    => __METHOD__,
+				'message'   => $result['error_message'],
+				'params'    => $params,
 				'backtrace' => $trace,
 			] );
 			return false;
@@ -1067,14 +1067,14 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Get ID of Option Value to disable.
 		$option_value_id = $this->option_value_id_get_by_term_id( $term_id );
-		if ( $option_value_id === false ) {
+		if ( false === $option_value_id ) {
 			return false;
 		}
 
 		// Define params for update.
 		$params = [
-			'version' => 3,
-			'id' => $option_value_id,
+			'version'   => 3,
+			'id'        => $option_value_id,
 			'is_active' => 0,
 		];
 
@@ -1099,13 +1099,13 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$this->hooks_civicrm_add();
 
 		// Log and bail if there's an error.
-		if ( ! empty( $result['is_error'] ) ) {
-			$e = new Exception();
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
+			$e     = new Exception();
 			$trace = $e->getTraceAsString();
 			$this->sync->log_error( [
-				'method' => __METHOD__,
-				'message' => $result['error_message'],
-				'params' => $params,
+				'method'    => __METHOD__,
+				'message'   => $result['error_message'],
+				'params'    => $params,
 				'backtrace' => $trace,
 			] );
 			return false;
@@ -1138,14 +1138,14 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Get ID of Option Value to delete.
 		$option_value_id = $this->option_value_id_get_by_term( $term );
-		if ( $option_value_id === false ) {
+		if ( false === $option_value_id ) {
 			return false;
 		}
 
 		// Define Option Value.
 		$params = [
 			'version' => 3,
-			'id' => $option_value_id,
+			'id'      => $option_value_id,
 		];
 
 		// Unhook CiviCRM.
@@ -1158,13 +1158,13 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$this->hooks_civicrm_add();
 
 		// Log and bail if there's an error.
-		if ( ! empty( $result['is_error'] ) ) {
-			$e = new Exception();
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
+			$e     = new Exception();
 			$trace = $e->getTraceAsString();
 			$this->sync->log_error( [
-				'method' => __METHOD__,
-				'message' => $result['error_message'],
-				'params' => $params,
+				'method'    => __METHOD__,
+				'message'   => $result['error_message'],
+				'params'    => $params,
 				'backtrace' => $trace,
 			] );
 			return false;
@@ -1202,15 +1202,15 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct params.
 		$params = [
-			'version' => 3,
-			'sequential' => 1,
-			'is_active' => 1,
-			'options' => [
+			'version'             => 3,
+			'sequential'          => 1,
+			'is_active'           => 1,
+			'options'             => [
 				'limit' => 0,
 			],
 			'api.CustomField.get' => [
 				'is_active' => 1,
-				'options' => [
+				'options'   => [
 					'limit' => 0,
 				],
 			],
@@ -1220,7 +1220,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$result = civicrm_api( 'CustomGroup', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && (int) $result['is_error'] === 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $custom_groups;
 		}
 
@@ -1260,16 +1260,16 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct params.
 		$params = [
-			'version' => 3,
+			'version'    => 3,
 			'sequential' => 1,
-			'id' => $custom_group_id,
+			'id'         => $custom_group_id,
 		];
 
 		// Call the API.
 		$result = civicrm_api( 'CustomGroup', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $custom_group;
 		}
 
@@ -1298,7 +1298,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 */
 	public function custom_fields_filter( $custom_fields ) {
 
-		// Init return,
+		// Init return.
 		$filtered = [];
 
 		// Let's look at each Custom Field.
@@ -1339,10 +1339,10 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Build params to get Custom Group data.
 		$params = [
-			'version' => 3,
-			'sequential' => 1,
+			'version'         => 3,
+			'sequential'      => 1,
 			'custom_group_id' => $custom_group_id,
-			'options' => [
+			'options'         => [
 				'limit' => 0, // No limit.
 			],
 		];
@@ -1351,7 +1351,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$result = civicrm_api( 'CustomField', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $fields;
 		}
 
@@ -1390,16 +1390,16 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct params.
 		$params = [
-			'version' => 3,
+			'version'    => 3,
 			'sequential' => 1,
-			'id' => $custom_field_id,
+			'id'         => $custom_field_id,
 		];
 
 		// Call the API.
 		$result = civicrm_api( 'CustomField', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $custom_field;
 		}
 
@@ -1436,8 +1436,8 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct params.
 		$params = [
-			'version' => 3,
-			'sequential' => 1,
+			'version'         => 3,
+			'sequential'      => 1,
 			'option_group_id' => $option_group_id,
 		];
 
@@ -1445,7 +1445,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$result = civicrm_api( 'CustomField', 'get', $params );
 
 		// Bail if there's an error.
-		if ( ! empty( $result['is_error'] ) && $result['is_error'] == 1 ) {
+		if ( ! empty( $result['is_error'] ) && 1 === (int) $result['is_error'] ) {
 			return $custom_group;
 		}
 
@@ -1469,9 +1469,9 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 *
-	 * @param string $entity The name of the CiviCRM Entity.
+	 * @param string  $entity The name of the CiviCRM Entity.
 	 * @param integer $entity_id The numeric ID of the CiviCRM Entity.
-	 * @param array $custom_field_ids The Custom Field IDs to query.
+	 * @param array   $custom_field_ids The Custom Field IDs to query.
 	 * @return array $values The array of values.
 	 */
 	public function custom_field_values_get_for_entity( $entity, $entity_id, $custom_field_ids = [] ) {
@@ -1497,11 +1497,11 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Define params to get queried Contact.
 		$params = [
-			'version' => 3,
+			'version'    => 3,
 			'sequential' => 1,
-			'id' => $entity_id,
-			'return' => $codes,
-			'options' => [
+			'id'         => $entity_id,
+			'return'     => $codes,
+			'options'    => [
 				'limit' => 0, // No limit.
 			],
 		];
@@ -1533,8 +1533,8 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		// Overwrite return.
 		foreach ( $result['values'] as $item ) {
 			foreach ( $item as $key => $value ) {
-				if ( substr( $key, 0, 7 ) == 'custom_' ) {
-					$index = (int) str_replace( 'custom_', '', $key );
+				if ( substr( $key, 0, 7 ) === 'custom_' ) {
+					$index            = (int) str_replace( 'custom_', '', $key );
 					$values[ $index ] = $value;
 				}
 			}
@@ -1560,12 +1560,12 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 *
-	 * @param object $objectRef The DAO object.
+	 * @param object $object_ref The DAO object.
 	 */
-	public function custom_field_edited( $objectRef ) {
+	public function custom_field_edited( $object_ref ) {
 
 		// Bail if not Option Value save operation.
-		if ( ! ( $objectRef instanceof CRM_Core_DAO_CustomField ) ) {
+		if ( ! ( $object_ref instanceof CRM_Core_DAO_CustomField ) ) {
 			return;
 		}
 
@@ -1574,7 +1574,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$trace = $e->getTraceAsString();
 		error_log( print_r( [
 			'method' => __METHOD__,
-			'objectRef' => $objectRef,
+			'object_ref' => $object_ref,
 			//'backtrace' => $trace,
 		], true ) );
 		*/
@@ -1653,7 +1653,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		$entity_name = $extends;
 
 		// Account for Contact variations.
-		if ( in_array( $entity_name, [ 'Individual', 'Household', 'Organization' ] ) ) {
+		if ( in_array( $entity_name, [ 'Individual', 'Household', 'Organization' ], true ) ) {
 			$entity_name = 'Contact';
 		}
 
@@ -1667,7 +1667,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 *
-	 * @param int $entity_id The numeric ID of the CiviCRM Entity.
+	 * @param int    $entity_id The numeric ID of the CiviCRM Entity.
 	 * @param string $entity_name The name of the CiviCRM Entity.
 	 * @return array $entity The array of CiviCRM Entity data, or empty if not found.
 	 */
@@ -1683,9 +1683,9 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Construct params.
 		$params = [
-			'version' => 3,
+			'version'    => 3,
 			'sequential' => 1,
-			'id' => $entity_id,
+			'id'         => $entity_id,
 		];
 
 		try {
@@ -1726,7 +1726,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 * @since 1.0
 	 *
 	 * @param string $entity_name The name of CiviCRM API Entity.
-	 * @param array $params The array of CiviCRM API params.
+	 * @param array  $params The array of CiviCRM API params.
 	 * @return array|bool $entity The array of CiviCRM Entity data, or false on failure.
 	 */
 	public function entity_update( $entity_name, $params ) {
@@ -1783,23 +1783,23 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 *
-	 * @param string $op The type of database operation.
-	 * @param string $objectName The type of object.
-	 * @param integer $objectId The ID of the object.
-	 * @param object $objectRef The object.
+	 * @param string  $op The type of database operation.
+	 * @param string  $object_name The type of object.
+	 * @param integer $object_id The ID of the object.
+	 * @param object  $object_ref The object.
 	 */
-	public function trace_pre( $op, $objectName, $objectId, $objectRef ) {
+	public function trace_pre( $op, $object_name, $object_id, $object_ref ) {
 
-		$e = new Exception();
+		$e     = new Exception();
 		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'op' => $op,
-			'objectName' => $objectName,
-			'objectId' => $objectId,
-			'objectRef' => $objectRef,
-			//'backtrace' => $trace,
-		], true ) );
+		$this->sync->log_error( [
+			'method'      => __METHOD__,
+			'op'          => $op,
+			'object_name' => $object_name,
+			'object_id'   => $object_id,
+			'object_ref'  => $object_ref,
+			'backtrace'   => $trace,
+		] );
 
 	}
 
@@ -1808,23 +1808,23 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 	 *
 	 * @since 1.0
 	 *
-	 * @param string $op The type of database operation.
-	 * @param string $objectName The type of object.
-	 * @param integer $objectId The ID of the object.
-	 * @param object $objectRef The object.
+	 * @param string  $op The type of database operation.
+	 * @param string  $object_name The type of object.
+	 * @param integer $object_id The ID of the object.
+	 * @param object  $object_ref The object.
 	 */
-	public function trace_post( $op, $objectName, $objectId, $objectRef ) {
+	public function trace_post( $op, $object_name, $object_id, $object_ref ) {
 
-		$e = new Exception();
+		$e     = new Exception();
 		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'op' => $op,
-			'objectName' => $objectName,
-			'objectId' => $objectId,
-			'objectRef' => $objectRef,
-			//'backtrace' => $trace,
-		], true ) );
+		$this->sync->log_error( [
+			'method'      => __METHOD__,
+			'op'          => $op,
+			'object_name' => $object_name,
+			'object_id'   => $object_id,
+			'object_ref'  => $object_ref,
+			'backtrace'   => $trace,
+		] );
 
 	}
 
