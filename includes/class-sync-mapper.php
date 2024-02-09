@@ -453,17 +453,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 			return;
 		}
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		object_id( print_r( [
-			'method' => __METHOD__,
-			'args' => $args,
-			'current_action' => current_action(),
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// The current action defines the Entity and ID.
 		switch ( current_action() ) {
 
@@ -494,18 +483,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 				break;
 
 		}
-
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		object_id( print_r( [
-			'method' => __METHOD__,
-			'entity_name' => $entity_name,
-			'entity_id' => $entity_id,
-			'entity' => $entity,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Get the Custom Field if it's not in the data.
 		$code = 'custom_' . $this->civicrm->custom_field_id;
@@ -550,16 +527,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 			}
 		}
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		object_id( print_r( [
-			'method' => __METHOD__,
-			'mapping' => $mapping,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Construct array of Term IDs to apply to Post.
 		$term_ids = [];
 		foreach ( $mapping as $option_value_id => $value ) {
@@ -568,16 +535,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 				$term_ids[] = $term->term_id;
 			}
 		}
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		object_id( print_r( [
-			'method' => __METHOD__,
-			'term_ids' => $term_ids,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Remove WordPress hooks.
 		$this->hooks_wordpress_remove();
