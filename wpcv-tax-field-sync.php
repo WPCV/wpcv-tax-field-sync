@@ -8,7 +8,7 @@
  * Version: 1.0.1a
  * Author URI: https://github.com/WPCV
  * Requires at least: 5.7
- * Requires PHP: 7.1
+ * Requires PHP: 7.3
  * Text Domain: wpcv-tax-field-sync
  * Domain Path: /languages
  *
