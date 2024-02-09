@@ -1037,7 +1037,7 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Success, grab Option Value ID.
 		if ( isset( $result['id'] ) && is_numeric( $result['id'] ) && $result['id'] > 0 ) {
-			$option_value_id = intval( $result['id'] );
+			$option_value_id = (int) $result['id'];
 		}
 
 		// --<
