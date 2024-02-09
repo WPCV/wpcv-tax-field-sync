@@ -70,7 +70,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Show existing information.
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GGathering source information:%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GGathering source information:%n' ) );
 
 		// Get the full taxonomy data.
 		$tax_object = get_taxonomy( $taxonomy );
@@ -103,9 +103,9 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		$array = array_values( $custom_fields->getArrayCopy() );
 		$custom_field = array_pop( $array );
 
-        // Build the rows.
+		// Build the rows.
 		$rows = [];
-		$fields = ['Source', 'Name'];
+		$fields = [ 'Source', 'Name' ];
 		$rows[] = [
 			'Source' => 'Custom Field',
 			'Name' => $custom_field['label'],
@@ -131,7 +131,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Show existing information.
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GGathering Sync Object information:%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GGathering Sync Object information:%n' ) );
 
 		// New Sync Object flag.
 		$new_sync_object = false;
@@ -175,7 +175,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		}
 
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GGathering Option Value information:%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GGathering Option Value information:%n' ) );
 
 		// Get the Option Value data.
 		$option_values = $sync_object->civicrm->option_values_get_by_field_id( $custom_field_id );
@@ -220,11 +220,11 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Sync the Option Values that need syncing.
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GCreating Terms...%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GCreating Terms...%n' ) );
 		foreach ( $option_values_to_sync as $option_value ) {
 			$term_created = $sync_object->wordpress->term_create( $option_value );
 			if ( ! empty( $term_created ) ) {
-				WP_CLI::log( sprintf(  WP_CLI::colorize( '%gCreated Term%n (ID: %d)' ), (int) $term_created['term_id'] ) );
+				WP_CLI::log( sprintf( WP_CLI::colorize( '%gCreated Term%n (ID: %d)' ), (int) $term_created['term_id'] ) );
 			}
 		}
 
@@ -276,7 +276,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Show existing information.
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GGathering source information:%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GGathering source information:%n' ) );
 
 		// Get the full taxonomy data.
 		$tax_object = get_taxonomy( $taxonomy );
@@ -309,9 +309,9 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 		$array = array_values( $custom_fields->getArrayCopy() );
 		$custom_field = array_pop( $array );
 
-        // Build the rows.
+		// Build the rows.
 		$rows = [];
-		$fields = ['Source', 'Name'];
+		$fields = [ 'Source', 'Name' ];
 		$rows[] = [
 			'Source' => 'Taxonomy',
 			'Name' => $tax_object->label,
@@ -337,7 +337,7 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Show existing information.
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GGathering Sync Object information:%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GGathering Sync Object information:%n' ) );
 
 		// New Sync Object flag.
 		$new_sync_object = false;
@@ -438,11 +438,11 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Sync the Terms that need syncing.
 		WP_CLI::log( '' );
-		WP_CLI::log(WP_CLI::colorize('%GCreating Option Values...%n'));
+		WP_CLI::log( WP_CLI::colorize( '%GCreating Option Values...%n' ) );
 		foreach ( $terms_to_sync as $term_id ) {
 			$option_value_created = $sync_object->wordpress->term_created( $term_id, null, $taxonomy );
 			if ( ! empty( $option_value_created ) ) {
-				WP_CLI::log( sprintf(  WP_CLI::colorize( '%gCreated Option Value%n (ID: %d)' ), (int) $option_value_created ) );
+				WP_CLI::log( sprintf( WP_CLI::colorize( '%gCreated Option Value%n (ID: %d)' ), (int) $option_value_created ) );
 			}
 		}
 
