@@ -154,14 +154,18 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 * @since 1.0
 	 *
 	 * @param array $term_id The numeric ID of the new Term.
-	 * @param array $tt_id The numeric ID of the new Term.
+	 * @param array $tt_id The numeric ID of the Term Taxonomy.
 	 * @param string $taxonomy Should be (an array containing) the Taxonomy slug.
+	 * @return int $taxonomy Should be (an array containing) the Taxonomy slug.
 	 */
 	public function term_created( $term_id, $tt_id, $taxonomy ) {
 
+		// Init return.
+		$option_value_id = false;
+
 		// Only act on Terms in the synced Taxonomy.
 		if ( $taxonomy !== $this->taxonomy ) {
-			return;
+			return $option_value_id;
 		}
 
 		// Get Term object.
@@ -170,8 +174,16 @@ class WPCV_Tax_Field_Sync_WordPress {
 		// Update CiviCRM Option Value - or create if it doesn't exist.
 		$option_value_id = $this->civicrm->option_value_update( $term );
 
+		// Bail if something went wrong.
+		if ( empty( $option_value_id ) ) {
+			return $option_value_id;
+		}
+
 		// Add the Option Value ID to the Term's meta.
 		$this->option_value_id_set( $term_id, (int) $option_value_id );
+
+		// --<
+		return $option_value_id;
 
 	}
 
@@ -555,6 +567,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Query Terms for the Term with the ID of the Option Value in meta data.
 		$args = [
+			'taxonomy' => $this->taxonomy,
 			'hide_empty' => false,
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query' => [
@@ -567,7 +580,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 		];
 
 		// Get what should only be a single Term.
-		$terms = get_terms( $this->taxonomy, $args );
+		$terms = get_terms( $args );
 
 		// Bail if there are no results.
 		if ( empty( $terms ) ) {
@@ -614,27 +627,12 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 * @since 1.0
 	 *
 	 * @param integer|string $post_id The ACF "Post ID".
-	 * @return array|bool $terms The array of Term objects, or false on failure.
+	 * @return array $terms The array of Term objects. Empty array on failure.
 	 */
 	public function terms_get_for_post( $post_id ) {
 
-		/*
-		// Limit Terms to those with Option Value IDs in their meta.
-		$params = [
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-			'meta_query' => [
-				[
-					'key' => $this->term_meta_key_option_value,
-					'compare' => 'EXISTS',
-				],
-			],
-		];
-		*/
-
-		$params = [];
-
 		// Grab the Terms.
-		$terms = get_the_terms( $post_id, $this->taxonomy, $params );
+		$terms = get_the_terms( $post_id, $this->taxonomy );
 
 		// Bail if there are no Terms or there's an error.
 		if ( empty( $terms ) || is_wp_error( $terms ) ) {
