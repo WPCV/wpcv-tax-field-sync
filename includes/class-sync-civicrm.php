@@ -325,32 +325,12 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		// Get the full Custom Field from the synced Custom Field ID.
 		$custom_field = $this->custom_field_get_by_id( $custom_field_id );
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'custom_field' => $custom_field,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		if ( empty( $custom_field ) ) {
 			return $option_group;
 		}
 
 		// Get the Option Group to which this Option Value is attached.
 		$option_group = $this->option_group_get_by_id( $custom_field['option_group_id'] );
-
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_group' => $option_group,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// --<
 		return $option_group;
@@ -375,32 +355,12 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		// Get the Option Group for this Custom Field.
 		$option_group = $this->option_group_get_by_field_id( $custom_field_id );
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_group' => $option_group,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		if ( empty( $option_group ) ) {
 			return $option_values;
 		}
 
 		// Get the Option Group to which this Option Value is attached.
 		$option_values = $this->option_values_get_by_group_id( $option_group['id'] );
-
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_values' => $option_values,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// --<
 		return $option_values;
@@ -738,19 +698,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			'is_active'   => $is_active,
 		];
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_value' => $option_value,
-			'custom_field' => $custom_field,
-			'option_value_full' => $option_value_full,
-			'term_data' => $term_data,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Create the Term.
 		$result = $this->wordpress->term_create( $term_data );
 
@@ -819,16 +766,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		// Extract Option Value for this hook.
 		$option_value =& $event->object;
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_value' => $option_value,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Bail if this isn't the type of object we're after.
 		if ( ! ( $option_value instanceof CRM_Core_DAO_OptionValue ) ) {
 			return;
@@ -881,19 +818,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			'description' => $description,
 			'is_active'   => $is_active,
 		];
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_value' => $option_value,
-			'custom_field' => $custom_field,
-			'option_value_full' => $option_value_full,
-			'term_data' => $term_data,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Update the Term.
 		$result = $this->wordpress->term_update( $term_data );
@@ -1083,17 +1007,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 
 		// Call the CiviCRM API.
 		$result = civicrm_api( 'OptionValue', 'create', $params );
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'params' => $params,
-			'result' => $result,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Rehook CiviCRM.
 		$this->hooks_civicrm_add();
@@ -1514,17 +1427,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			return $values;
 		}
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'params' => $params,
-			'result' => $result,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Bail if there are no results.
 		if ( empty( $result['values'] ) ) {
 			return $values;
@@ -1568,16 +1470,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 		if ( ! ( $object_ref instanceof CRM_Core_DAO_CustomField ) ) {
 			return;
 		}
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'object_ref' => $object_ref,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 	}
 
@@ -1696,17 +1588,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			return $entity;
 		}
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'params' => $params,
-			'result' => $result,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Bail if there are no results.
 		if ( empty( $result['values'] ) ) {
 			return $entity;
@@ -1751,17 +1632,6 @@ class WPCV_Tax_Field_Sync_CiviCRM {
 			// Bail if there's an error.
 			return $entity;
 		}
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'params' => $params,
-			'result' => $result,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Bail if there are no results.
 		if ( empty( $result['values'] ) ) {

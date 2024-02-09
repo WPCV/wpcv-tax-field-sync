@@ -249,17 +249,6 @@ class WPCV_Tax_Field_Sync_WordPress {
 		// Get current Term object.
 		$new_term = get_term_by( 'id', $term_id, $this->taxonomy );
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'new_term' => $new_term,
-			'old_term' => $old_term,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Update the CiviCRM Option Value - or create if it doesn't exist.
 		$option_value_id = $this->civicrm->option_value_update( $new_term, $old_term );
 
@@ -274,17 +263,6 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 * @param string $taxonomy The name of the Taxonomy.
 	 */
 	public function term_deleted_pre( $deleted_term_id, $taxonomy ) {
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'deleted_term_id' => $deleted_term_id,
-			'taxonomy' => $taxonomy,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Only act on Terms in the synced Taxonomy.
 		if ( $taxonomy !== $this->taxonomy ) {
@@ -347,17 +325,6 @@ class WPCV_Tax_Field_Sync_WordPress {
 			return false;
 		}
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'result' => $result,
-			'option_value' => $option_value,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Add the Option Value ID to the Term's meta.
 		$this->option_value_id_set( $result['term_id'], (int) $option_value['id'] );
 
@@ -388,17 +355,6 @@ class WPCV_Tax_Field_Sync_WordPress {
 		if ( ! is_array( $new_option_value ) ) {
 			return false;
 		}
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'new_option_value' => $new_option_value,
-			'old_option_value' => $old_option_value,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// First, query Term meta.
 		$term = $this->term_get_by_option_value( $new_option_value );
@@ -450,16 +406,6 @@ class WPCV_Tax_Field_Sync_WordPress {
 		// Update the Term.
 		$result = wp_update_term( $term_id, $this->taxonomy, $args );
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'result' => $result,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Rehook listeners.
 		$this->hooks_wordpress_add();
 
@@ -501,17 +447,6 @@ class WPCV_Tax_Field_Sync_WordPress {
 
 		// Delete the Term.
 		$result = wp_delete_term( $term_id, $this->taxonomy );
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'term_id' => $term_id,
-			'result' => $result,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Rehook listeners.
 		$this->hooks_wordpress_add();
@@ -679,29 +614,8 @@ class WPCV_Tax_Field_Sync_WordPress {
 	 */
 	public function option_value_id_get( $term_id ) {
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'term_id' => $term_id,
-			'term_meta_key' => $this->term_meta_key_option_value,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Get the Option Value ID from the Term's meta.
 		$option_value_id = get_term_meta( $term_id, $this->term_meta_key_option_value, true );
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'option_value_id' => $option_value_id,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Bail if there is no result.
 		if ( empty( $option_value_id ) ) {
@@ -739,13 +653,13 @@ class WPCV_Tax_Field_Sync_WordPress {
 			/*
 			$e = new Exception();
 			$trace = $e->getTraceAsString();
-			error_log( print_r( [
+			$this->sync->log_error( [
 				'method' => __METHOD__,
 				'message' => __( 'Could not add Term meta', 'wpcv-tax-field-sync' ),
 				'term_id' => $term_id,
 				'option_value_id' => $option_value_id,
 				'backtrace' => $trace,
-			], true ) );
+			] );
 			*/
 
 		}

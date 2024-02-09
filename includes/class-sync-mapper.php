@@ -247,31 +247,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 			return;
 		}
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'args' => $args,
-			'current_action' => current_action(),
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Get the Terms assigned to the Post.
 		$terms      = $this->wordpress->terms_get_for_post( $args['post_id'] );
 		$term_names = wp_list_pluck( $terms, 'name' );
-
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'terms' => $terms,
-			'term_names' => $term_names,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		/*
 		// Get the full synced Custom Field.
@@ -313,29 +291,8 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		}
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'entity_name' => $entity_name,
-			'entity_id' => $entity_id,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Get the full Entity so we're not guessing.
 		$entity = $this->civicrm->entity_get( $entity_id, $entity_name );
-
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'entity' => $entity,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		if ( empty( $entity ) ) {
 			return;
@@ -364,17 +321,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 			$params['event_id']   = $entity['event_id'];
 		}
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'params' => $params,
-			'entity_name' => $entity_name,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Remove CiviCRM hooks.
 		$this->hooks_civicrm_remove();
 
@@ -398,17 +344,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 */
 	public function custom_edited( $post_ids, $args ) {
 
-		/*
-		$e = new Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'post_ids' => $post_ids,
-			'args' => $args,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Bail if there are no Post IDs.
 		if ( empty( $post_ids ) ) {
 			return;
@@ -419,16 +354,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 		if ( empty( $synced_custom_fields ) ) {
 			return;
 		}
-
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'synced_custom_fields' => $synced_custom_fields,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
 
 		// Build array of new values.
 		$new_values = [];
@@ -454,33 +379,12 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		}
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'new_values' => $new_values,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Build mappings array.
 		$mappings = [];
 		foreach ( $new_values as $custom_field_id => $values ) {
 
 			// Get the Option Values for the synced Custom Field ID.
 			$option_values = $this->civicrm->option_values_get_by_field_id( $custom_field_id );
-
-			/*
-			$e = new Exception();
-			$trace = $e->getTraceAsString();
-			error_log( print_r( [
-				'method' => __METHOD__,
-				'option_values' => $option_values,
-				//'backtrace' => $trace,
-			], true ) );
-			*/
-
 			if ( empty( $option_values ) ) {
 				continue;
 			}
@@ -500,16 +404,6 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		}
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'mappings' => $mappings,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Construct array of Term IDs to apply to Post.
 		$term_ids = [];
 		foreach ( $mappings as $custom_field_id => $mapping ) {
@@ -521,37 +415,15 @@ class WPCV_Tax_Field_Sync_Mapper {
 			}
 		}
 
-		/*
-		$e = new \Exception();
-		$trace = $e->getTraceAsString();
-		error_log( print_r( [
-			'method' => __METHOD__,
-			'term_ids' => $term_ids,
-			//'backtrace' => $trace,
-		], true ) );
-		*/
-
 		// Remove WordPress hooks.
 		$this->hooks_wordpress_remove();
 
 		// Handle each Post ID in turn.
 		foreach ( $post_ids as $post_id ) {
 			$taxonomies = get_post_taxonomies( $post_id );
-
-			/*
-			$e = new \Exception();
-			$trace = $e->getTraceAsString();
-			error_log( print_r( [
-				'method' => __METHOD__,
-				'taxonomies' => $taxonomies,
-				//'backtrace' => $trace,
-			], true ) );
-			*/
-
 			if ( in_array( $this->wordpress->taxonomy, $taxonomies, true ) ) {
 				$this->wordpress->terms_update_for_post( $post_id, $term_ids );
 			}
-
 		}
 
 		// Add WordPress hooks.
@@ -584,7 +456,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		/*
 		$e = new Exception();
 		$trace = $e->getTraceAsString();
-		error_log( print_r( [
+		object_id( print_r( [
 			'method' => __METHOD__,
 			'args' => $args,
 			'current_action' => current_action(),
@@ -626,7 +498,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		/*
 		$e = new Exception();
 		$trace = $e->getTraceAsString();
-		error_log( print_r( [
+		object_id( print_r( [
 			'method' => __METHOD__,
 			'entity_name' => $entity_name,
 			'entity_id' => $entity_id,
@@ -681,7 +553,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		/*
 		$e = new Exception();
 		$trace = $e->getTraceAsString();
-		error_log( print_r( [
+		object_id( print_r( [
 			'method' => __METHOD__,
 			'mapping' => $mapping,
 			//'backtrace' => $trace,
@@ -700,7 +572,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		/*
 		$e = new \Exception();
 		$trace = $e->getTraceAsString();
-		error_log( print_r( [
+		object_id( print_r( [
 			'method' => __METHOD__,
 			'term_ids' => $term_ids,
 			//'backtrace' => $trace,
