@@ -70,6 +70,9 @@ class WPCV_Tax_Field_Sync {
 	 */
 	public function __construct() {
 
+		// Always include WP-CLI command.
+		require_once WPCV_TAX_FIELD_SYNC_PATH . 'includes/wp-cli/wp-cli-loader.php';
+
 		// Initialise this plugin.
 		$this->initialise();
 
@@ -159,6 +162,89 @@ class WPCV_Tax_Field_Sync {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Gets a Sync object.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @param string $taxonomy The slug of the WordPress Taxonomy.
+	 * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+	 * @return WPCV_Tax_Field_Sync_Base|bool $sync The Sync object reference, or false if not found.
+	 */
+	public function get_sync( $taxonomy, $custom_field_id ) {
+
+		// Init return.
+		$sync = false;
+
+		// Bail if we have no Sync objects.
+		if ( empty( $this->sync_objects ) ) {
+			return $sync;
+		}
+
+		// Let's look at our Sync objects array.
+		foreach ( $this->sync_objects as $sync_object ) {
+
+			// Skip those that don't match.
+			if ( $custom_field_id !== $sync_object->civicrm->custom_field_id ) {
+				continue;
+			}
+			if ( $taxonomy !== $sync_object->wordpress->taxonomy ) {
+				continue;
+			}
+
+			// Found it.
+			$sync = $sync_object;
+			break;
+
+		}
+
+		// --<
+		return $sync;
+
+	}
+
+	/**
+	 * Query Sync objects.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @param array $query The array of query arguments.
+	 * @return array $sync_objects The array of Sync objects, or empty if not found.
+	 */
+	public function query_sync( $query = [] ) {
+
+		// Init return.
+		$sync_objects = [];
+
+		// Bail if we have no Sync objects.
+		if ( empty( $this->sync_objects ) ) {
+			return $sync_objects;
+		}
+
+		// Let's look at our Sync objects array.
+		foreach ( $this->sync_objects as $sync_object ) {
+
+			// Add those that match the Custom Field ID.
+			if (! empty( $query['custom_field_id'] ) ) {
+				if ( (int) $query['custom_field_id'] === $sync_object->civicrm->custom_field_id ) {
+					$sync_objects[] = $sync_object;
+				}
+			}
+
+			// Add those that match the Taxonomy.
+			if (! empty( $query['taxonomy'] ) ) {
+				if ( $query['taxonomy'] === $sync_object->wordpress->taxonomy ) {
+					$sync_objects[] = $sync_object;
+				}
+			}
+
+		}
+
+		// --<
+		return array_unique( $sync_objects, SORT_REGULAR );
+
+	}
+
+	/**
 	 * Instantiates a Sync object and returns reference.
 	 *
 	 * @since 1.0
@@ -172,6 +258,9 @@ class WPCV_Tax_Field_Sync {
 
 		// Instantiate object.
 		$sync = new WPCV_Tax_Field_Sync_Base( $taxonomy, $custom_field_id, $sync_direction );
+
+		// Save it for discovery.
+		$this->sync_objects[] = $sync;
 
 		// --<
 		return $sync;
@@ -205,7 +294,7 @@ class WPCV_Tax_Field_Sync {
 			$sync_direction = WPCV_TAX_FIELD_SYNC_DIRECTION;
 		}
 		// Bootstrap initial Sync object.
-		$this->sync_objects[] = $this->register_sync( $taxonomy, $custom_field_id, $sync_direction );
+		$this->register_sync( $taxonomy, $custom_field_id, $sync_direction );
 
 	}
 
@@ -299,5 +388,36 @@ function wpcv_tax_field_register( $taxonomy, $custom_field_id, $sync_direction =
 
 	// Returns a Sync object.
 	return wpcv_tax_field_sync()->register_sync( $taxonomy, $custom_field_id, $sync_direction );
+
+}
+
+/**
+ * Gets a Sync object.
+ *
+ * @since 1.0.1
+ *
+ * @param string $taxonomy The slug of the WordPress Taxonomy.
+ * @param int $custom_field_id The numeric ID of the CiviCRM Custom Field.
+ * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
+ */
+function wpcv_tax_field_get( $taxonomy, $custom_field_id ) {
+
+	// Returns a Sync object.
+	return wpcv_tax_field_sync()->get_sync( $taxonomy, $custom_field_id );
+
+}
+
+/**
+ * Queries the Sync objects.
+ *
+ * @since 1.0.1
+ *
+ * @param array $query The array of query arguments.
+ * @return WPCV_Tax_Field_Sync_Base $sync The Sync object reference.
+ */
+function wpcv_tax_field_query( $query ) {
+
+	// Returns an array of Sync objects.
+	return wpcv_tax_field_sync()->query_sync( $query );
 
 }
