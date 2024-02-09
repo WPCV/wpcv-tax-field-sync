@@ -403,11 +403,11 @@ class WPCV_Tax_Field_Sync_CLI_Command_Connect extends WPCV_Tax_Field_Sync_CLI_Co
 
 		// Do we have any Terms to sync?
 		$terms_to_sync = [];
-		$key           = $sync_object->wordpress->term_meta_key_option_value;
 
 		// Build the rows.
 		$rows   = [];
 		$fields = [ 'Term', 'Term ID', 'Option Value ID' ];
+		$key    = $sync_object->wordpress->term_meta_key_option_value;
 		foreach ( $terms as $term ) {
 
 			// Get meta and maybe add to Terms to sync.
