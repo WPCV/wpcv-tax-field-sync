@@ -1,16 +1,20 @@
 <?php
 /**
- * Plugin Name: WPCV Custom Field Taxonomy Sync
- * Plugin URI: https://github.com/WPCV/wpcv-tax-field-sync
+ * WPCV Custom Field Taxonomy Sync
+ *
+ * Plugin Name:       WPCV Custom Field Taxonomy Sync
+ * Description:       Keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
+ * Version:           1.0.2a
+ * Plugin URI:        https://github.com/WPCV/wpcv-tax-field-sync
  * GitHub Plugin URI: https://github.com/WPCV/wpcv-tax-field-sync
- * Description: Keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
- * Author: WPCV
- * Version: 1.0.2a
- * Author URI: https://github.com/WPCV
+ * Author:            WPCV
+ * Author URI:        https://github.com/WPCV
  * Requires at least: 5.7
- * Requires PHP: 7.3
- * Text Domain: wpcv-tax-field-sync
- * Domain Path: /languages
+ * Requires PHP:      7.3
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Text Domain:       wpcv-tax-field-sync
+ * Domain Path:       /languages
  *
  * @package WPCV_Tax_Field_Sync
  */
