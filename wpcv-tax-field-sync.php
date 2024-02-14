@@ -22,8 +22,6 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-
-
 // Set plugin version here.
 define( 'WPCV_TAX_FIELD_SYNC_VERSION', '1.0.2a' );
 
@@ -46,8 +44,6 @@ if ( ! defined( 'WPCV_TAX_FIELD_SYNC_PATH' ) ) {
 if ( ! defined( 'WPCV_TAX_FIELD_SYNC_DEBUG' ) ) {
 	define( 'WPCV_TAX_FIELD_SYNC_DEBUG', false );
 }
-
-
 
 /**
  * Plugin Class.
