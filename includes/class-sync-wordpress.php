@@ -56,6 +56,19 @@ class WPCV_Tax_Field_Sync_WordPress {
 	public $term_meta_key_option_value = '_wpcv_tax_field_sync_option_value_id';
 
 	/**
+	 * An array of Term objects prior to edit.
+	 *
+	 * There are situations where nested updates take place (e.g. via CiviRules)
+	 * so we keep copies of the Terms in an array and try and match them up in
+	 * the post edit hook.
+	 *
+	 * @since 1.0
+	 * @access private
+	 * @var array
+	 */
+	private $term_edited = [];
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0
@@ -218,7 +231,7 @@ class WPCV_Tax_Field_Sync_WordPress {
 		}
 
 		// Store for reference in term_edited().
-		$this->term_edited = clone $term;
+		$this->term_edited[ $term->term_id ] = clone $term;
 
 	}
 
@@ -238,16 +251,15 @@ class WPCV_Tax_Field_Sync_WordPress {
 			return;
 		}
 
-		// Assume we have no edited Term.
-		$old_term = null;
-
-		// Use it if we have the Term stored.
-		if ( isset( $this->term_edited ) ) {
-			$old_term = $this->term_edited;
-		}
-
 		// Get current Term object.
 		$new_term = get_term_by( 'id', $term_id, $this->taxonomy );
+
+		// Populate "Old Term" if we have it stored.
+		$old_term = null;
+		if ( ! empty( $this->term_edited[ $new_term->term_id ] ) ) {
+			$old_term = $this->term_edited[ $new_term->term_id ];
+			unset( $this->term_edited[ $new_term->term_id ] );
+		}
 
 		// Update the CiviCRM Option Value - or create if it doesn't exist.
 		$option_value_id = $this->civicrm->option_value_update( $new_term, $old_term );
