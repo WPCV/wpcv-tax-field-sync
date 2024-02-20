@@ -151,6 +151,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 			return;
 		}
 
+		// Handle "Quick Edit" changes.
+		add_action( 'save_post', [ $this, 'quick_edit' ], 20, 3 );
+
 		// Intercept Post ACF Fields saved.
 		add_action( 'cwps/acf/activity/acf_fields_saved', [ $this, 'post_saved' ], 20 );
 		add_action( 'cwps/acf/contact/acf_fields_saved', [ $this, 'post_saved' ], 20 );
@@ -166,6 +169,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 * @since 1.0
 	 */
 	public function hooks_wordpress_remove() {
+
+		// Remove "Quick Edit" callback.
+		remove_action( 'save_post', [ $this, 'quick_edit' ], 20 );
 
 		// Remove WordPress callbacks.
 		remove_action( 'cwps/acf/activity/acf_fields_saved', [ $this, 'post_saved' ], 20 );
@@ -226,6 +232,52 @@ class WPCV_Tax_Field_Sync_Mapper {
 	}
 
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Handles "Quick Edit" changes.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @param integer $post_id The ID of the Post or revision.
+	 * @param integer $post The Post object.
+	 * @param bool $update True if the Post is being updated, false if new.
+	 */
+	public function quick_edit( $post_id, $post, $update ) {
+
+		// Bail if sync is CiviCRM-to-WordPress.
+		if ( 'civicrm_to_wp' === $this->sync_direction ) {
+			return;
+		}
+
+		// Bail if this is not Quick Edit.
+		if ( ! doing_action( 'wp_ajax_inline-save' ) ) {
+			return;
+		}
+
+		// Bail if there was a Multisite switch.
+		if ( is_multisite() && ms_is_switched() ) {
+			return;
+		}
+
+		// Let's make an array of the params.
+		$args = [
+			'post_id' => $post_id,
+		];
+
+		/**
+		 * Fire the CiviCRM Profile Sync action which notifies listeners that
+		 * ACF Fields have been saved for a Post.
+		 *
+		 * This is not an ideal way of handling things because there is a
+		 * substantial overhead associated with doing so - but it does work.
+		 *
+		 * @since 1.0.2
+		 *
+		 * @param array $args The array of WordPress params.
+		 */
+		do_action( 'cwps/acf/mapper/acf_fields/saved', $args );
+
+	}
 
 	/**
 	 * Intercept when changes have been made to the Post.
@@ -293,16 +345,18 @@ class WPCV_Tax_Field_Sync_Mapper {
 
 		// Get the full Entity so we're not guessing.
 		$entity = $this->civicrm->entity_get( $entity_id, $entity_name );
-
 		if ( empty( $entity ) ) {
 			return;
 		}
 
+		// Build API key.
+		$custom_key = 'custom_' . $this->civicrm->custom_field_id;
+
 		// Init params.
 		$params = [
-			'version'                                   => 3,
-			'id'                                        => $entity_id,
-			'custom_' . $this->civicrm->custom_field_id => $term_names,
+			'version'   => 3,
+			'id'        => $entity_id,
+			$custom_key => $term_names,
 		];
 
 		// The Contact API requires Contact Type.
