@@ -152,7 +152,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 		}
 
 		// Handle "Quick Edit" changes.
-		add_action( 'save_post', [ $this, 'quick_edit' ], 20, 3 );
+		add_action( 'cwps/acf/mapper/post/saved', [ $this, 'quick_edit' ], 20 );
 
 		// Intercept Post ACF Fields saved.
 		add_action( 'cwps/acf/activity/acf_fields_saved', [ $this, 'post_saved' ], 20 );
@@ -171,7 +171,7 @@ class WPCV_Tax_Field_Sync_Mapper {
 	public function hooks_wordpress_remove() {
 
 		// Remove "Quick Edit" callback.
-		remove_action( 'save_post', [ $this, 'quick_edit' ], 20 );
+		remove_action( 'cwps/acf/mapper/post/saved', [ $this, 'quick_edit' ], 20 );
 
 		// Remove WordPress callbacks.
 		remove_action( 'cwps/acf/activity/acf_fields_saved', [ $this, 'post_saved' ], 20 );
@@ -238,11 +238,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 	 *
 	 * @since 1.0.2
 	 *
-	 * @param integer $post_id The ID of the Post or revision.
-	 * @param integer $post The Post object.
-	 * @param bool    $update True if the Post is being updated, false if new.
+	 * @param array $args The array of WordPress params.
 	 */
-	public function quick_edit( $post_id, $post, $update ) {
+	public function quick_edit( $args ) {
 
 		// Bail if sync is CiviCRM-to-WordPress.
 		if ( 'civicrm_to_wp' === $this->sync_direction ) {
@@ -254,14 +252,9 @@ class WPCV_Tax_Field_Sync_Mapper {
 			return;
 		}
 
-		// Bail if there was a Multisite switch.
-		if ( is_multisite() && ms_is_switched() ) {
-			return;
-		}
-
 		// Let's make an array of the params.
 		$args = [
-			'post_id' => $post_id,
+			'post_id' => $args['post_id'],
 		];
 
 		/**
