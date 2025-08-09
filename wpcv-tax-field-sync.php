@@ -4,7 +4,7 @@
  *
  * Plugin Name:       WPCV Custom Field Taxonomy Sync
  * Description:       Keeps a WordPress Taxonomy and a CiviCRM Custom Field in sync.
- * Version:           1.0.2
+ * Version:           1.0.3a
  * Plugin URI:        https://github.com/WPCV/wpcv-tax-field-sync
  * GitHub Plugin URI: https://github.com/WPCV/wpcv-tax-field-sync
  * Author:            WPCV
@@ -23,7 +23,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Set plugin version here.
-define( 'WPCV_TAX_FIELD_SYNC_VERSION', '1.0.2' );
+define( 'WPCV_TAX_FIELD_SYNC_VERSION', '1.0.3a' );
 
 // Store reference to this file.
 if ( ! defined( 'WPCV_TAX_FIELD_SYNC_FILE' ) ) {
